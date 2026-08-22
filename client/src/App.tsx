@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import HackathonDemo from "./pages/HackathonDemo";
+import AgentConsole from "./pages/AgentConsole";
 import Home from "./pages/Home";
 import LiveReadWorkspace from "./pages/LiveReadWorkspace";
 
@@ -15,6 +16,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/demo"} component={HackathonDemo} />
       <Route path={"/live-read"} component={LiveReadWorkspace} />
+      <Route path={"/agent"} component={AgentConsole} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

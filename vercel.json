@@ -6,6 +6,12 @@
   "functions": {
     "api/scan.ts": {
       "maxDuration": 15
+    },
+    "api/agent-scan.ts": {
+      "maxDuration": 15
+    },
+    "api/chat.ts": {
+      "maxDuration": 15
     }
   },
   "rewrites": [

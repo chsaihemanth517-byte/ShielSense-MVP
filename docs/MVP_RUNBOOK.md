@@ -2,25 +2,33 @@
 
 ## What is ready
 
-The MVP accepts explicit scan input at `POST /api/scan`, runs local technical and human-signal heuristics, queries URLhaus and ThreatFox when a URL or host is available, optionally performs structured LLM enrichment when explicitly enabled, and returns a bounded 0–100 risk assessment. The public landing-page hero now provides the same flow for a **Link**, **File**, or **Message**. The main **Get ShieldSense** call-to-action now opens `/live-read`, an original-style workspace with a chat-like composer for pasted text and safe file attachments, plus a left-side privacy-safe history rail. The `/demo` route and Chrome extension continue using the same API and risk engine.
+The MVP accepts explicit scan input at `POST /api/scan`, runs local technical and human-signal heuristics, queries URLhaus and ThreatFox when a URL or host is available, optionally performs structured LLM enrichment when explicitly enabled, and returns a bounded 0–100 risk assessment. The landing-page **Get ShieldSense** call-to-action opens `/live-read`, an original-style workspace with a chat-like composer for pasted text and safe file attachments, plus a left-side privacy-safe history rail. The `/demo` route and Chrome extension continue using the same API and risk engine.
 
 File scanning is deliberately limited to static metadata: a sanitized filename, reported MIME type, byte size, and an optional SHA-256 calculated locally by the browser. ShieldSense does not upload, open, render, or execute a selected file. Static filename/MIME/size signals are treated as cautionary evidence, not malware-sandbox verdicts.
 
 ## Required Supabase action
 
-The initial `scan_metadata` migration and service-role grants have been applied. Apply the follow-up `supabase/migrations/20260823_expand_scan_history.sql` in the Supabase SQL Editor before expecting Supabase-backed recent-history retrieval. It adds only scan IDs, input categories, sanitized history labels, optional file hashes, and simulated response actions; it does not add raw content columns.
+The initial `scan_metadata` migration, the follow-up `supabase/migrations/20260823_expand_scan_history.sql`, and service-role grants have been applied. The follow-up migration adds only scan IDs, input categories, sanitized history labels, optional file hashes, and simulated response actions; it does not add raw content columns.
 
-Until the follow-up migration is applied, scans continue normally. The hero still displays the current browser-session summary, while the response truthfully reports `metadataPersisted: false` if the optional persistence write cannot succeed.
+Scans continue normally even if optional persistence becomes unavailable. Live Reading and Agent Console responses truthfully report `metadataPersisted: false` if the optional privacy-safe metadata write cannot succeed.
 
 ## Local development
 
-Run `pnpm dev`, then visit `/` to use the hero scanner, `/live-read` for the chat-style live-reading workspace, or send a `POST` request to `http://localhost:3000/api/scan` with a JSON body matching `shared/scan.ts`. `GET /api/scan-history?ids=<comma-separated-scan-ids>` returns only privacy-safe entries for scan IDs the requesting browser already knows; it never lists a global scan feed. The `/demo` route contains fictional `.example` scenarios. For an extension test, temporarily change `API_ORIGIN` at the top of `extension/background.js` to `http://localhost:3000`, then load the `extension/` folder through Chrome’s **Load unpacked** action.
+Run `pnpm dev`, then visit `/live-read` for the chat-style live-reading workspace, `/agent` for the controlled Agent Console, or send a `POST` request to `http://localhost:3000/api/scan` with a JSON body matching `shared/scan.ts`. `GET /api/scan-history?ids=<comma-separated-scan-ids>` returns only privacy-safe entries for scan IDs the requesting browser already knows; it never lists a global scan feed. The `/demo` route contains fictional `.example` scenarios. For an extension test, temporarily change `API_ORIGIN` at the top of `extension/background.js` to `http://localhost:3000`, then load the `extension/` folder through Chrome’s **Load unpacked** action.
 
 The Live Reading composer automatically extracts the first valid explicit `http://` or `https://` link from pasted text and sends it alongside the text for the current scan. This preserves human-manipulation analysis while making URLhaus and ThreatFox eligible for a real URL/domain lookup. The UI names the extracted link and the lookup stage; provider results still show their actual `checked`, `not_found`, `unavailable`, or `skipped` status.
 
+## Controlled Agent Console
+
+`/agent` is a **demo-only** workspace. Its Start, Pause, Resume, Stop, and Reset controls operate a browser-session timer over five clearly labeled controlled mock-inbox events; they do not run a background job and they do not connect to a mailbox, browser, endpoint, or file system. Each selected event calls `POST /api/agent/scan`, which converts the controlled input into the existing `/api/scan` service contract, persists the normal privacy-safe scan metadata, and returns the same risk result, provider states, recommendations, and simulated response used everywhere else.
+
+High- and critical-risk reads automatically create an in-session incident report from the structured scan result. The report contains a sanitized target, risk result, provider status, signal names, recommendations, and the simulated response disclaimer. It never includes raw mock message bodies, private content, full webpage data, or file bytes. The underlying scan metadata remains available through the existing scoped history mechanism; the presentation report is intentionally session-scoped in this demo.
+
+`POST /api/chat` provides factual scan-context security answers. It accepts a question and an optional completed `ScanResult`. Without a result it asks for a scan; with one it only summarizes that result’s risk score, signals, recommendations, and actual provider statuses. It does not claim an intelligence lookup ran when it was skipped or unavailable, and it does not execute actions. The implementation is deterministic and grounded by design; no new client-side model key is used.
+
 ## Vercel deployment
 
-Vercel discovers `api/scan.ts` and `api/scan-history.ts` as serverless functions and serves the Vite client from `dist/public`. Configure `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `URLHAUS_AUTH_KEY`, and `THREATFOX_AUTH_KEY` as server-only Vercel environment variables. Redeploy after adding the variables. The extension’s production API origin must match the deployed Vercel origin in `extension/background.js`.
+Vercel discovers `api/scan.ts`, `api/scan-history.ts`, `api/agent-scan.ts`, and `api/chat.ts` as serverless functions and serves the Vite client from `dist/public`. Configure `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `URLHAUS_AUTH_KEY`, and `THREATFOX_AUTH_KEY` as server-only Vercel environment variables. Redeploy after adding the variables. The extension’s production API origin must match the deployed Vercel origin in `extension/background.js`.
 
 ## Privacy model
 

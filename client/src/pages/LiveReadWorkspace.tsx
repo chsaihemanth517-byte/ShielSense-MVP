@@ -181,7 +181,7 @@ export default function LiveReadWorkspace() {
       <header className="live-read__header">
         <a className="brand" href="/" aria-label="Return to ShieldSense home"><span className="brand__mark" aria-hidden="true"><span /><span /></span><span>SHIELDSENSE</span></a>
         <div className="live-read__header-meta"><span>LIVE READING</span><span>EXPLICIT INPUT ONLY</span></div>
-        <a className="live-read__back" href="/"><ArrowLeft size={14} aria-hidden="true" /> Product site</a>
+        <div className="live-read__header-links"><a href="/agent">Agent console</a><a className="live-read__back" href="/"><ArrowLeft size={14} aria-hidden="true" /> Product site</a></div>
       </header>
 
       <section className="live-read__workspace" aria-label="ShieldSense live reading workspace">

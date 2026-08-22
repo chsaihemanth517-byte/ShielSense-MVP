@@ -93,3 +93,11 @@
 - [x] Add tests and run a current known IP:port IOC through the ShieldSense API to verify a real provider hit, elevated risk, and simulated response mapping.
 - [x] Checkpoint the verified IP-inspection enhancement without pushing code.
 - [x] Stabilize the bounded URLhaus timeout exposed during live IOC verification, then rerun provider checks and the complete test suite.
+- [x] Audit existing ShieldSense scan, intelligence, persistence, history, extension, and reusable chat/dashboard components against the bonus-feature brief.
+- [x] Define shared contracts for controlled mock inbox events, simulated agent state, structured incident reports, and scan-grounded chat without creating a second detection engine.
+- [x] Build simulated agent orchestration that processes only controlled mock events through the existing `/api/scan` engine and reports actual provider states.
+- [x] Generate privacy-safe incident reports from existing structured scan results, including evidence, simulated response, and remediation without raw content persistence.
+- [x] Build a scan-context security chat that never invents provider evidence and asks for scan input when no context exists.
+- [x] Create an original ShieldSense Agent Console with start/pause/resume/stop controls, mock inbox, live activity, incident reports, evidence, and grounded chat.
+- [x] Connect the Agent Console with existing navigation, Live Reading, history, and scan routes without breaking landing, demo, extension, or input flows.
+- [ ] Checkpoint the validated bonus implementation without pushing code.
