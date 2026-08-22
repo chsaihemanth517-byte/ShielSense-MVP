@@ -228,7 +228,7 @@ button:disabled { cursor: wait; opacity: 0.68; }
 .concept-label { display: block; margin-top: 2.1rem; color: rgba(233,236,232,0.35); font: 400 0.55rem/1.3 "DM Mono", monospace; text-transform: uppercase; }
 
 .story-scene--audience { min-height: 80svh; border-top: 1px solid rgba(233,236,232,0.1); background: #0e1311; }
-.audience-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(2rem, 10vw, 10rem); align-items: center; width: 100%; max-width: 85rem; margin: 0 auto; }
+.audience-grid { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(20rem, 0.78fr) minmax(0, 1.22fr); gap: clamp(2.5rem, 6vw, 6.5rem); align-items: center; width: 100%; max-width: 85rem; margin: 0 auto; }
 .audience-signal-card { position: relative; min-height: 15.5rem; margin-top: clamp(1.5rem, 4vw, 3.4rem); padding: 1.15rem; border: 1px solid rgba(60,217,168,0.24); border-radius: 0.9rem; background: linear-gradient(135deg, rgba(60,217,168,0.08), rgba(233,236,232,0.02) 58%, rgba(255,138,92,0.04)); overflow: hidden; isolation: isolate; }
 .audience-signal-card .cinematic-signal-field { z-index: -1; opacity: 0.7; pointer-events: none; }
 .audience-signal-card__copy { position: relative; z-index: 1; display: grid; max-width: 15rem; gap: 0.6rem; }
@@ -238,10 +238,11 @@ button:disabled { cursor: wait; opacity: 0.68; }
 .audience-signal-card__channels { position: absolute; z-index: 1; right: 1.1rem; bottom: 1rem; display: grid; gap: 0.4rem; text-align: right; }
 .audience-signal-card__channels span { display: inline-block; padding: 0.36rem 0.48rem; border: 1px solid rgba(60,217,168,0.38); border-radius: 0.25rem; color: var(--technical); background: rgba(9,13,11,0.44); font: 500 0.5rem/1 "DM Mono", monospace; }
 .audience-signal-card__channels span:last-child { border-color: rgba(255,138,92,0.42); color: var(--human); }
-.audience-list { display: grid; gap: 1rem; }
-.audience-list p { display: grid; grid-template-columns: 2.5rem 1fr; gap: 0.7rem; margin: 0; padding: 1rem 0; border-top: 1px solid rgba(233,236,232,0.14); color: rgba(233,236,232,0.74); font-size: 0.84rem; line-height: 1.5; }
-.audience-list p:last-child { border-bottom: 1px solid rgba(233,236,232,0.14); }
-.audience-list span { color: var(--technical); font: 500 0.62rem/1.5 "DM Mono", monospace; }
+.audience-list { display: grid; align-content: center; border-top: 1px solid rgba(233,236,232,0.14); }
+.audience-item { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 1.5rem; margin: 0; padding: clamp(1.25rem, 2.1vw, 2rem) 0; border-bottom: 1px solid rgba(233,236,232,0.14); }
+.audience-item__index { padding-top: 0.2rem; color: var(--technical); font: 500 0.64rem/1.5 "DM Mono", monospace; }
+.audience-item h3 { margin: 0; color: var(--mist); font: 600 clamp(1.05rem, 1.55vw, 1.36rem)/1.12 "Space Grotesk", sans-serif; letter-spacing: -0.035em; }
+.audience-item p { max-width: 41rem; margin: 0.52rem 0 0; color: rgba(233,236,232,0.69); font-size: clamp(0.76rem, 0.95vw, 0.88rem); line-height: 1.62; text-wrap: pretty; }
 
 .faq-section { position: relative; display: grid; grid-template-columns: 0.82fr 1.18fr; gap: clamp(2.5rem, 9vw, 10rem); padding: clamp(5rem, 10vw, 10rem) clamp(1.35rem, 8vw, 10rem); color: var(--void); background: var(--mist); overflow: hidden; }
 .faq-section::before { position: absolute; top: 0; left: 6%; width: 62%; height: 1px; background: linear-gradient(90deg, transparent, rgba(60,217,168,0.85), rgba(255,138,92,0.6), transparent); content: ""; }
@@ -327,6 +328,7 @@ button:disabled { cursor: wait; opacity: 0.68; }
   .audience-grid, .faq-section { grid-template-columns: 1fr; }
   .story-scene--audience { min-height: auto; }
   .audience-signal-card { min-height: 13rem; margin-top: 1.8rem; }
+  .audience-item { grid-template-columns: 3rem minmax(0, 1fr); gap: 0.9rem; }
   .faq-section { padding: 5rem 1.35rem; }
   .final-cta { padding-right: 1.35rem; padding-left: 1.35rem; }
   .waitlist-form__row { border-radius: 0.85rem; }

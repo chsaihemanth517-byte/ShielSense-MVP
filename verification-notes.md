@@ -28,3 +28,5 @@ The visual system maintains its near-black field, technical green, restrained hu
 | Judge-proof mobile | The proof flow and proof summary collapse into a readable vertical sequence without reducing button reachability or message-context legibility. | Pass |
 | Audience section desktop | The left side now continues from the audience headline into a two-channel context panel, filling the previously unused vertical space while leaving the audience list clear on the right. | Pass |
 | Audience section mobile | The context panel stacks below the headline before the audience list, preserving a clear reading order and a contained signal visual. | Pass |
+| Audience-column content review | The desktop audience grid now spans 1,137 px at a 1,280 px viewport. The audience column is 647 px wide and each description receives 551 px of text width, producing the requested broad middle/right editorial composition. | Pass |
+| Audience-column mobile review | The full-width desktop grid correctly returns to the established single-column mobile reading order, with the enriched audience descriptions remaining contained and legible. | Pass |

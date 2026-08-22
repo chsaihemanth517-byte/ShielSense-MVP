@@ -510,9 +510,27 @@ export default function Home() {
               </div>
             </div>
             <div className="audience-list">
-              <p><span>01</span> Everyday people making ordinary decisions online.</p>
-              <p><span>02</span> Remote workers moving quickly between tools and requests.</p>
-              <p><span>03</span> Families and small teams looking out for one another.</p>
+              <article className="audience-item">
+                <span className="audience-item__index">01</span>
+                <div>
+                  <h3>Everyday people</h3>
+                  <p>People making ordinary decisions online who need a quick way to understand what sits behind a message, link, or request.</p>
+                </div>
+              </article>
+              <article className="audience-item">
+                <span className="audience-item__index">02</span>
+                <div>
+                  <h3>Remote workers</h3>
+                  <p>People moving quickly between messages, tools, files, and requests who need context without interrupting their workflow.</p>
+                </div>
+              </article>
+              <article className="audience-item">
+                <span className="audience-item__index">03</span>
+                <div>
+                  <h3>Families and individuals</h3>
+                  <p>People helping themselves or others decide whether an unfamiliar message deserves trust, caution, or further investigation.</p>
+                </div>
+              </article>
             </div>
           </div>
         </section>

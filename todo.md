@@ -38,3 +38,5 @@
 - [x] Verify the dedicated demo route on desktop and mobile, then checkpoint both routes.
 - [x] Use the unused “Who it is for” space to add a visual two-channel audience context panel without crowding the original audience list.
 - [x] Verify the revised audience section on desktop and mobile, then checkpoint the refinement.
+- [x] Redesign the audience items 01–03 into a wider desktop composition with concise multi-line descriptions that use the available middle and right width.
+- [x] Verify the audience-column redesign in the desktop preview while preserving responsive stacking, then checkpoint the refinement.
