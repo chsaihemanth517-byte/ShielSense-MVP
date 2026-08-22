@@ -104,4 +104,4 @@
 - [x] Inspect the landing-page header and hero navigation to place clear Agent Console and Demo links without disrupting motion.
 - [x] Add ShieldSense-styled landing-page buttons linking to `/agent` and `/demo` while preserving the existing Get ShieldSense route.
 - [x] Verify the new navigation controls on desktop and mobile and run validation without pushing code.
-- [ ] Checkpoint the verified landing Agent Console and Demo navigation update without pushing code.
+- [x] Checkpoint the verified landing Agent Console and Demo navigation update without pushing code.
