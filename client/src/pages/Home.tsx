@@ -1,15 +1,8 @@
 import { ArrowDown, ArrowUpRight, Check, ChevronRight, CircleAlert, Fingerprint, LockKeyhole, Plus, Radar, ScanSearch, ShieldCheck, Sparkles } from "lucide-react";
-import { FormEvent, type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { FormEvent } from "react";
+import { CinematicSignalField } from "@/components/CinematicSignalField";
 import { trpc } from "@/lib/trpc";
-
-type Particle = {
-  id: number;
-  x: number;
-  y: number;
-  delay: number;
-  size: number;
-  channel: "technical" | "human";
-};
 
 const sceneLinks = [
   { label: "Home", href: "#home" },
@@ -59,48 +52,6 @@ const faqs = [
       "ShieldSense is being built around data minimization. The product will clearly explain what it needs to analyze a message or link, and the waitlist is only used to share launch information—never sold to third parties.",
   },
 ];
-
-function createParticles(): Particle[] {
-  return Array.from({ length: 116 }, (_, index) => {
-    const angle = index * 2.399963229728653;
-    const radius = 7 + Math.sqrt(index / 116) * 41;
-    const isHuman = index % 11 === 0 || index % 17 === 0;
-    return {
-      id: index,
-      x: 50 + Math.cos(angle) * radius * 0.9,
-      y: 50 + Math.sin(angle) * radius * 0.72,
-      delay: (index % 19) * 0.11,
-      size: 1 + (index % 4) * 0.55,
-      channel: isHuman ? "human" : "technical",
-    };
-  });
-}
-
-function ParticleField({ state = "resting" }: { state?: "resting" | "dispersed" | "focused" }) {
-  const particles = useMemo(createParticles, []);
-
-  return (
-    <div className={`particle-field particle-field--${state}`} aria-hidden="true">
-      <div className="particle-field__orb" />
-      <div className="particle-field__ring particle-field__ring--one" />
-      <div className="particle-field__ring particle-field__ring--two" />
-      {particles.map(particle => (
-        <i
-          key={particle.id}
-          className={`particle particle--${particle.channel}`}
-          style={
-            {
-              "--particle-x": `${particle.x}%`,
-              "--particle-y": `${particle.y}%`,
-              "--particle-delay": `${particle.delay}s`,
-              "--particle-size": `${particle.size}px`,
-            } as CSSProperties
-          }
-        />
-      ))}
-    </div>
-  );
-}
 
 function WaitlistForm({ compact = false }: { compact?: boolean }) {
   const [email, setEmail] = useState("");
@@ -165,16 +116,22 @@ function WaitlistForm({ compact = false }: { compact?: boolean }) {
 
 export default function Home() {
   const heroVisualRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLSpanElement>(null);
+  const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
     const scenes = Array.from(document.querySelectorAll<HTMLElement>(".story-scene"));
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
-          if (entry.isIntersecting) entry.target.classList.add("is-visible");
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            const sectionId = entry.target.id || (entry.target.classList.contains("story-scene--product") ? "product" : entry.target.classList.contains("story-scene--audience") ? "about" : "how-it-works");
+            setActiveSection(sectionId);
+          }
         });
       },
-      { threshold: 0.2 },
+      { threshold: 0.42 },
     );
 
     scenes.forEach(scene => observer.observe(scene));
@@ -269,8 +226,55 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    const canUseSignalCursor = window.matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)");
+    if (!cursor || !canUseSignalCursor.matches) return;
+
+    document.body.classList.add("signal-cursor-enabled");
+
+    const target = { x: -80, y: -80 };
+    const current = { x: -80, y: -80 };
+    let animationFrame: number | null = null;
+
+    const render = () => {
+      current.x += (target.x - current.x) * 0.19;
+      current.y += (target.y - current.y) * 0.19;
+      cursor.style.setProperty("--cursor-x", `${current.x.toFixed(1)}px`);
+      cursor.style.setProperty("--cursor-y", `${current.y.toFixed(1)}px`);
+      const stillMoving = Math.abs(target.x - current.x) > 0.1 || Math.abs(target.y - current.y) > 0.1;
+      animationFrame = stillMoving ? window.requestAnimationFrame(render) : null;
+    };
+
+    const requestRender = () => {
+      if (animationFrame === null) animationFrame = window.requestAnimationFrame(render);
+    };
+    const onPointerMove = (event: PointerEvent) => {
+      target.x = event.clientX;
+      target.y = event.clientY;
+      const targetElement = event.target instanceof Element ? event.target : null;
+      cursor.classList.toggle("is-active", Boolean(targetElement?.closest("a, button, summary, input, label")));
+      requestRender();
+    };
+    const hideCursor = () => cursor.classList.remove("is-visible");
+    const showCursor = () => cursor.classList.add("is-visible");
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("blur", hideCursor);
+    window.addEventListener("focus", showCursor);
+    showCursor();
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("blur", hideCursor);
+      window.removeEventListener("focus", showCursor);
+      document.body.classList.remove("signal-cursor-enabled");
+      if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
+    };
+  }, []);
+
   return (
     <main className="shieldsense-site">
+      <span ref={cursorRef} className="signal-cursor" aria-hidden="true"><span /></span>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
@@ -291,7 +295,7 @@ export default function Home() {
 
       <nav className="floating-nav" aria-label="Section navigation">
         {sceneLinks.map(link => (
-          <a key={link.href} href={link.href}>
+          <a key={link.href} href={link.href} className={activeSection === link.href.slice(1) ? "is-current" : undefined} aria-current={activeSection === link.href.slice(1) ? "page" : undefined}>
             {link.label}
           </a>
         ))}
@@ -314,7 +318,8 @@ export default function Home() {
             </a>
           </div>
           <div className="hero-visual" ref={heroVisualRef}>
-            <ParticleField state="resting" />
+            <CinematicSignalField mode="coherent" />
+            <div className="hero-visual__orbital" aria-hidden="true"><span /><span /><span /></div>
             <div className="hero-visual__annotation" aria-hidden="true">
               <span>signal / 02</span>
               <span>message analysis</span>
@@ -335,7 +340,7 @@ export default function Home() {
             </p>
           </div>
           <div className="threat-visual" aria-hidden="true">
-            <ParticleField state="dispersed" />
+            <CinematicSignalField mode="dispersed" />
             <div className="threat-visual__fragment fragment--one">your invoice is ready</div>
             <div className="threat-visual__fragment fragment--two">view document</div>
           </div>
@@ -350,6 +355,7 @@ export default function Home() {
             </p>
           </div>
           <div className="message-stage" aria-label="Illustration of a message being scanned">
+            <CinematicSignalField mode="beam" />
             <div className="scan-beam" aria-hidden="true" />
             <div className="message-card">
               <div className="message-card__topline">
@@ -384,6 +390,7 @@ export default function Home() {
             </p>
           </div>
           <div className="split-stage" aria-label="Illustration of ShieldSense detecting two channels of risk">
+            <CinematicSignalField mode="split" />
             <div className="scan-lock" aria-hidden="true">
               <span className="scan-lock__corner scan-lock__corner--tl" />
               <span className="scan-lock__corner scan-lock__corner--tr" />
@@ -414,6 +421,7 @@ export default function Home() {
             </p>
           </div>
           <div className="action-card" aria-label="Illustrative ShieldSense recommended action">
+            <CinematicSignalField mode="resolve" />
             <div className="action-card__signal"><CircleAlert size={22} /></div>
             <div className="action-card__head">
               <span className="eyebrow">[ RECOMMENDED ACTION ]</span>
@@ -436,6 +444,7 @@ export default function Home() {
             <p className="scene-lede">A focused flow designed to make a complicated moment feel legible.</p>
           </div>
           <div className="walkthrough-grid">
+            <CinematicSignalField mode="split" />
             {walkthroughSteps.map((step, index) => {
               const Icon = step.icon;
               return (

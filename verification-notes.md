@@ -13,3 +13,7 @@ The visual system maintains its near-black field, technical green, restrained hu
 | Pointer behavior | The hero runs an inertial, request-animation-frame loop only for fine pointers without reduced-motion preference. Values are capped to shallow translations and a 1.35° maximum tilt. | Pass by implementation review |
 | Mobile and touch behavior | Coarse-pointer media rules pin pointer and scroll variables to their static values while preserving the content and stage compositions. The 375 px verification displays a stable, single-column scene sequence. | Pass |
 | Accessibility | Reduced-motion rules suppress the nonessential interpolation while maintaining particle, scan beam, scan-lock, and evidence states as static visual information. | Pass |
+
+| Cinematic desktop review | The original canvas signal field now differentiates the four narrative states: coherent message signal, threat dispersion, technical scan beam, and two-channel evidence split. | Pass |
+| Cinematic mobile review | The field density is reduced for touch devices and pointer/cursor behavior is disabled, leaving a legible static signal composition without compromising the story sequence. | Pass |
+| Keyboard and focus review | The cinematic cursor is only enabled for fine pointer devices; keyboard interaction continues to use native focusable controls and the global visible focus ring. Canvas layers are decorative and hidden from the accessibility tree. | Pass by implementation review |

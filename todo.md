@@ -14,3 +14,10 @@
 - [x] Add smooth pointer-responsive depth to the ShieldSense hero and selected signal-stage layers without compromising reduced-motion support.
 - [x] Refine the visual scenes with scroll-progress-driven state changes, depth layering, and performance-safe animation timing.
 - [x] Verify the enhanced animation system on desktop and mobile, then checkpoint the refinement.
+- [x] Verify access to the supplied YouTube motion-reference video and record whether it is available for analysis.
+- [x] Translate the accessible DOTDNA reference video into an original ShieldSense cinematic motion specification.
+- [x] Replace the current decorative particle treatment with an original cursor-reactive signal field that can form, disperse, scan, and resolve into ShieldSense evidence states.
+- [x] Build stronger scroll-led chapters for the threat reveal, two-channel scan, action recommendation, and product walkthrough without copying reference branding or content.
+- [x] Add a restrained custom signal cursor, depth-aware card motion, and premium interaction feedback for fine-pointer devices.
+- [x] Rebalance typography, atmosphere, framing, navigation, and FAQ styling into one cohesive ShieldSense signal-intelligence design system.
+- [x] Verify performance, mobile behavior, keyboard accessibility, and reduced-motion equivalents for the cinematic experience, then checkpoint the upgrade.

@@ -21,3 +21,17 @@ The scroll experience should use a single active visual idea per section. The te
 ## Refinement plan
 
 The implementation will add a pointer-aware hero wrapper, an inertial motion loop, per-layer depth values, and a scroll-progress CSS variable for the existing particle field, scan beam, scan lock, and product walkthrough. These effects will run only on fine-pointer desktop devices that do not request reduced motion. Touch devices will preserve the visual states without pointer tracking, maintaining the current mobile performance budget.
+
+## Cinematic upgrade specification
+
+The next iteration will treat ShieldSense as a **continuous signal world**. Its primary visual is not a generic brain, globe, or face: it is an original message-signal field that passes through four meaningful states as the visitor moves through the story. First, a calm orbital signal coheres around a protected message. Next, it releases into untrusted fragments. Then it concentrates into a vertical technical scan and bifurcates into a green technical trace and a coral human-manipulation trace. Finally, it stabilizes around a concrete recommended action.
+
+| System | ShieldSense implementation |
+|---|---|
+| Particle engine | A canvas-rendered, seeded point field with several hundred particles on a fine-pointer desktop and a reduced density on touch devices. Each particle interpolates toward an original ShieldSense message-signal target, allowing fields to cohere and disperse without third-party art or reference-derived shapes. |
+| Pointer response | Nearby particles make a shallow, temporary avoidance movement around the pointer, while the canvas plane and annotation move at separate inertial depth rates. It must feel tactile, not like a toy cursor effect. |
+| Scroll progression | Scroll position drives bounded progress variables for the message field, vertical scan beam, scan-lock, two evidence traces, and product cards. Narrative changes happen at scene boundaries, not as continuous unrelated loops. |
+| Typography | Headlines use masked, staggered reveal behavior. Copy remains on an independent DOM plane to protect readability, selection, keyboard interaction, and search indexing. |
+| Cursor | A restrained two-channel signal cursor appears only for precise pointer devices. It responds to CTA and navigation hover states but does not replace the system cursor for keyboard users or touch devices. |
+| Atmosphere | Faint bloom, scan rings, and a low-density star field provide depth. Bright green is concentrated at technical scan moments, while coral only appears when a human-manipulation tactic is named. |
+| Performance and access | Canvas resolution is capped by device pixel ratio, animation pauses when off-screen, and both coarse-pointer and reduced-motion contexts receive an immediately legible static composition. |
