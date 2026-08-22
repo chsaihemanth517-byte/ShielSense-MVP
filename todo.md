@@ -65,3 +65,12 @@
 - [x] Remove PhishTank from the active scan pipeline, credentials, environment documentation, and result-source presentation.
 - [x] Validate the supplied Supabase, URLhaus, and ThreatFox credentials through server-only configuration checks.
 - [x] Store the supplied Supabase, URLhaus, and ThreatFox values in server-only project configuration without exposing them to client code.
+- [x] Audit the attached Link, File, Message, response-action, and history requirements against the existing ShieldSense MVP without duplicating working features.
+- [x] Extend the shared scan contract and risk engine for safe static file metadata and explainable simulated response actions.
+- [x] Extend privacy-safe scan metadata persistence and history retrieval without storing raw message or file contents.
+- [x] Add a hero-level three-mode Link, File, and Message scan entry panel that preserves the current ShieldSense visual language and motion.
+- [x] Display validation, scan progress, live evidence, source status, simulated response, and privacy-safe recent scan history in the unified experience.
+- [x] Add tests, accessibility checks, and setup documentation for the expanded unified scan flow.
+- [ ] Validate desktop and mobile hero scanning, persistence, and history; then checkpoint the expanded MVP without pushing to GitHub.
+- [ ] Apply `supabase/migrations/20260823_expand_scan_history.sql` in the existing Supabase SQL Editor to enable durable cross-refresh history retrieval.
+- [x] Validate desktop and mobile hero layout, all three API input types, simulated response actions, session-history privacy boundaries, type checks, tests, and production build.

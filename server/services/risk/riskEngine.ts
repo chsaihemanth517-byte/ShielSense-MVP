@@ -1,4 +1,4 @@
-import { RISK_BANDS, type RiskLevel, type ScanResult, type ThreatIntelResult, type ThreatSignal } from "@shared/scan";
+import { RISK_BANDS, type RiskLevel, type ScanInputType, type ScanResult, type SimulatedResponseAction, type ThreatIntelResult, type ThreatSignal } from "@shared/scan";
 
 const PROVIDER_WEIGHTS: Record<NonNullable<ThreatIntelResult["severity"]>, number> = {
   low: 8,
@@ -18,7 +18,23 @@ function recommendationFor(level: RiskLevel): string[] {
   return ["No elevated risk was found from the available signals.", "Continue normal verification habits if the context changes."];
 }
 
-export function correlateRisk(input: { scanId: string; signals: ThreatSignal[]; providers: ThreatIntelResult[]; durationMs: number; metadataPersisted: boolean }): ScanResult {
+function simulatedResponseFor(level: RiskLevel, verdict: ScanResult["verdict"]): { action: SimulatedResponseAction; label: string } {
+  if (verdict === "malicious" || level === "critical") return { action: "quarantine", label: "QUARANTINE" };
+  if (level === "high") return { action: "block", label: "BLOCK" };
+  if (level === "medium") return { action: "warn", label: "WARN USER" };
+  return { action: "allow", label: "ALLOW" };
+}
+
+function explanationFor(inputType: ScanInputType, riskLevel: RiskLevel, signals: ThreatSignal[], providers: ThreatIntelResult[]) {
+  const inputLabel = inputType === "file" ? "static file metadata" : inputType === "message" ? "the pasted message" : "the submitted link";
+  const foundSources = providers.filter(provider => provider.found).length;
+  if (riskLevel === "low") return `No elevated signals were found from ${inputLabel}. This reflects the available checks, not a guarantee of safety.`;
+  const signalLabel = `${signals.length} local ${signals.length === 1 ? "signal" : "signals"}`;
+  const sourceLabel = foundSources ? ` and ${foundSources} matching threat-intelligence ${foundSources === 1 ? "source" : "sources"}` : "";
+  return `ShieldSense found ${signalLabel}${sourceLabel} while reading ${inputLabel}. Review the evidence before proceeding.`;
+}
+
+export function correlateRisk(input: { scanId: string; inputType?: ScanInputType; signals: ThreatSignal[]; providers: ThreatIntelResult[]; durationMs: number; metadataPersisted: boolean }): ScanResult {
   const localWeight = input.signals.reduce((sum, signal) => sum + signal.weight, 0);
   const providerWeight = input.providers.reduce((sum, provider) => sum + (provider.found && provider.severity ? PROVIDER_WEIGHTS[provider.severity] : 0), 0);
   const hasTwoChannelEvidence = new Set(input.signals.map(signal => signal.channel)).size === 2;
@@ -29,9 +45,12 @@ export function correlateRisk(input: { scanId: string; signals: ThreatSignal[]; 
   const verdict = confirmedMalicious ? "malicious" : riskLevel === "high" || riskLevel === "critical" ? "likely_phishing" : riskLevel === "medium" ? "suspicious" : "clear";
   const checkedProviders = input.providers.filter(provider => provider.status === "checked" || provider.status === "not_found").length;
   const confidence = Math.min(100, 30 + Math.min(35, input.signals.length * 8) + Math.min(25, checkedProviders * 8) + (hasTwoChannelEvidence ? 10 : 0));
+  const inputType = input.inputType ?? "url";
+  const simulatedResponse = simulatedResponseFor(riskLevel, verdict);
 
   return {
     scanId: input.scanId,
+    inputType,
     riskScore,
     riskLevel,
     verdict,
@@ -39,6 +58,8 @@ export function correlateRisk(input: { scanId: string; signals: ThreatSignal[]; 
     signals: input.signals,
     providers: input.providers,
     recommendations: recommendationFor(riskLevel),
+    explanation: explanationFor(inputType, riskLevel, input.signals, input.providers),
+    simulatedResponse: { ...simulatedResponse, disclaimer: "Simulated response — no real system action is performed." },
     privacy: { rawContentPersisted: false, metadataPersisted: input.metadataPersisted },
     durationMs: input.durationMs,
   };

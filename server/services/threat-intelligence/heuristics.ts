@@ -44,6 +44,19 @@ const TEXT_RULES = [
   { id: "reward_manipulation", name: "Reward or prize manipulation", severity: "medium" as const, weight: 9, description: "The message uses a reward or prize to encourage impulsive action.", pattern: /\b(prize|winner|reward|claim your|exclusive offer)\b/i },
 ];
 
+const FILE_RULES = {
+  executable_attachment: { id: "executable_attachment", name: "Executable or script attachment", severity: "high" as const, weight: 20, description: "The filename indicates an executable or script-capable attachment that should not be opened casually." },
+  macro_enabled_document: { id: "macro_enabled_document", name: "Macro-enabled document", severity: "high" as const, weight: 16, description: "The filename indicates a document type that can contain embedded macros." },
+  double_extension: { id: "double_extension", name: "Misleading double extension", severity: "critical" as const, weight: 25, description: "The filename uses a document-like extension before a second executable extension, which can obscure its actual type." },
+  unsupported_attachment: { id: "unsupported_attachment", name: "Unsupported dynamic attachment type", severity: "medium" as const, weight: 12, description: "ShieldSense can only perform static metadata checks on this attachment type; it does not execute or open files." },
+  file_type_mismatch: { id: "file_type_mismatch", name: "Filename and MIME type do not align", severity: "medium" as const, weight: 10, description: "The browser-reported MIME type does not align with the filename extension. MIME values can be spoofed, so this is a cautionary signal rather than proof." },
+  unusually_large_attachment: { id: "unusually_large_attachment", name: "Unusually large attachment", severity: "low" as const, weight: 4, description: "The attachment is large enough to make quick manual inspection less practical." },
+};
+
+const EXECUTABLE_EXTENSIONS = new Set(["exe", "dll", "scr", "msi", "bat", "cmd", "ps1", "vbs", "vbe", "js", "jse", "wsf", "wsh", "hta", "jar", "app", "apk"]);
+const MACRO_EXTENSIONS = new Set(["docm", "dotm", "xlsm", "xltm", "xlsb", "pptm", "potm", "ppsm"]);
+const DOCUMENT_EXTENSIONS = new Set(["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "csv", "rtf", "odt", "ods", "odp"]);
+
 function makeSignal(rule: UrlSignalRule | (typeof TEXT_RULES)[number], channel: ThreatSignal["channel"], evidence?: string): ThreatSignal {
   return { id: rule.id, channel, source: "ShieldSense Heuristics", name: rule.name, severity: rule.severity, description: rule.description, evidence, weight: rule.weight };
 }
@@ -122,6 +135,44 @@ export function runTextHeuristics(request: ScanRequest): ThreatSignal[] {
   });
 }
 
+function extensionFromFilename(name: string) {
+  return name.split(".").at(-1)?.toLowerCase() ?? "";
+}
+
+function inferredMimeCategory(extension: string) {
+  if (extension === "pdf") return "application/pdf";
+  if (["txt", "csv"].includes(extension)) return "text/";
+  if (["doc", "docx", "xls", "xlsx", "ppt", "pptx", "docm", "xlsm", "pptm"].includes(extension)) return "application/";
+  return null;
+}
+
+export function runFileHeuristics(request: ScanRequest): ThreatSignal[] {
+  if (!request.file) return [];
+  const filename = request.file.name.trim();
+  const extension = extensionFromFilename(filename);
+  const segments = filename.toLowerCase().split(".").filter(Boolean);
+  const penultimate = segments.at(-2) ?? "";
+  const signals: ThreatSignal[] = [];
+
+  if (EXECUTABLE_EXTENSIONS.has(extension) && (DOCUMENT_EXTENSIONS.has(penultimate) || MACRO_EXTENSIONS.has(penultimate))) {
+    signals.push(makeSignal(FILE_RULES.double_extension, "technical", filename.slice(0, 120)));
+  } else if (EXECUTABLE_EXTENSIONS.has(extension)) {
+    signals.push(makeSignal(FILE_RULES.executable_attachment, "technical", `.${extension}`));
+  } else if (MACRO_EXTENSIONS.has(extension)) {
+    signals.push(makeSignal(FILE_RULES.macro_enabled_document, "technical", `.${extension}`));
+  } else if (!DOCUMENT_EXTENSIONS.has(extension) && !["jpg", "jpeg", "png", "gif", "webp", "zip", "7z", "rar"].includes(extension)) {
+    signals.push(makeSignal(FILE_RULES.unsupported_attachment, "technical", extension ? `.${extension}` : "no extension"));
+  }
+
+  const expectedMime = inferredMimeCategory(extension);
+  const normalizedMime = request.file.mimeType.toLowerCase();
+  if (expectedMime && normalizedMime !== "application/octet-stream" && !normalizedMime.startsWith(expectedMime)) {
+    signals.push(makeSignal(FILE_RULES.file_type_mismatch, "technical", `${filename.slice(0, 64)} / ${normalizedMime.slice(0, 48)}`));
+  }
+  if (request.file.size >= 5 * 1024 * 1024) signals.push(makeSignal(FILE_RULES.unusually_large_attachment, "technical", `${Math.ceil(request.file.size / (1024 * 1024))} MB`));
+  return signals;
+}
+
 export function runLocalHeuristics(request: ScanRequest): ThreatSignal[] {
-  return [...runUrlHeuristics(request), ...runTextHeuristics(request)];
+  return [...runUrlHeuristics(request), ...runTextHeuristics(request), ...runFileHeuristics(request)];
 }
