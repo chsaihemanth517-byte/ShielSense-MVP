@@ -1,1 +1,6 @@
 # ShieldSense-Landing-Page--IndustryHack
+Threats keep changing. New malware and phishing pages appear every day. A system that only matches against a fixed list of "known bad" signatures will always be one step behind — your agent should reason about suspicious behavior and patterns, not just look things up.
+Phishing is about language, not just links. A phishing message often looks completely normal at a glance — it relies on urgency, fake authority, and clever wording. Detecting it means understanding intent, not just scanning for a bad URL.
+False alarms erode trust. If the app flags every second email as "dangerous," people will stop trusting it and start ignoring real warnings. Getting the balance right matters as much as catching real threats.
+People need to understand "why." A red "Danger!" label isn't enough — the agent should explain, in plain words, what specifically looked suspicious, so the user can learn to spot it themselves next time.
+An agent shouldn't act recklessly. If your AI agent can take action (block, quarantine, delete), it needs guardrails — it shouldn't destroy or block something without being reasonably confident, and ideally without checking with the user first.
