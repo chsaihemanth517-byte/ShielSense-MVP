@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { ArrowLeft, Check, CircleAlert, FileUp, LoaderCircle, Paperclip, SendHorizontal, ShieldCheck, X } from "lucide-react";
 import { CinematicSignalField, type SignalMode } from "@/components/CinematicSignalField";
+import { extractFirstHttpUrl } from "@/lib/urlExtraction";
 import type { ScanHistoryEntry, ScanResult } from "@shared/scan";
 
 const HISTORY_STORAGE_KEY = "shieldsense.hero-scan-ids.v1";
@@ -15,7 +16,8 @@ function displaySize(size: number) {
   return size < 1024 * 1024 ? `${Math.max(1, Math.ceil(size / 1024))} KB` : `${(size / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function progressFor(fileAttached: boolean) {
+function progressFor(fileAttached: boolean, urlDetected: boolean) {
+  if (urlDetected) return ["VALIDATING LINK + CONTEXT", "LOCAL HEURISTIC ANALYSIS", "URLHAUS + THREATFOX LOOKUPS", "RISK ASSESSMENT"];
   return fileAttached
     ? ["VALIDATING METADATA", "STATIC FILE SIGNALS", "READING MESSAGE CONTEXT", "RISK ASSESSMENT"]
     : ["VALIDATING MESSAGE", "HUMAN-SIGNAL HEURISTICS", "CORRELATING SIGNALS", "RISK ASSESSMENT"];
@@ -58,7 +60,9 @@ export default function LiveReadWorkspace() {
   const [result, setResult] = useState<ScanResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submittedText, setSubmittedText] = useState("");
+  const [submittedUrl, setSubmittedUrl] = useState<string | undefined>();
   const [history, setHistory] = useState<ScanHistoryEntry[]>([]);
+  const detectedUrl = extractFirstHttpUrl(text);
 
   useEffect(() => {
     const stored = window.sessionStorage.getItem(HISTORY_STORAGE_KEY);
@@ -135,9 +139,11 @@ export default function LiveReadWorkspace() {
     setError(null);
     setResult(null);
     setSubmittedText(normalizedText);
+    const extractedUrl = extractFirstHttpUrl(normalizedText);
+    setSubmittedUrl(extractedUrl);
     setStage("scanning");
     setProgressIndex(0);
-    const steps = progressFor(Boolean(file));
+    const steps = progressFor(Boolean(file), Boolean(extractedUrl));
     const timer = window.setInterval(() => setProgressIndex(current => Math.min(current + 1, steps.length - 1)), 420);
     const sanitizedFileName = file?.name.replace(/[^\w. ()-]/g, "_").slice(0, 180) || "Selected file";
     const inputIdentifier = file ? sanitizedFileName : "Pasted message";
@@ -146,6 +152,7 @@ export default function LiveReadWorkspace() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          url: extractedUrl,
           pastedMessage: normalizedText || undefined,
           file: file ? { name: sanitizedFileName, size: file.size, mimeType: file.type || "application/octet-stream", sha256: fileHash } : undefined,
           sourceContext: file ? "hero_file" : "hero_message",
@@ -199,8 +206,8 @@ export default function LiveReadWorkspace() {
             <div className="live-read__field" aria-hidden="true"><CinematicSignalField mode={modeFor(stage, result)} /></div>
             {stage === "ready" && <div className="live-read__empty"><div><span>01</span><b>Attach safely</b><p>Metadata stays local. Files are never opened or executed.</p></div><div><span>02</span><b>Paste context</b><p>Human-pressure signals need the words around the request.</p></div><div><span>03</span><b>Read the evidence</b><p>Get clear reasoning and a simulated next action.</p></div></div>}
             {(stage === "scanning" || stage === "complete" || stage === "error") && <div className="live-read__thread">
-              {(submittedText || file) && <div className="live-read__user-bubble"><p>{submittedText || "File metadata request"}</p>{file && <span><Paperclip size={12} /> {file.name} · {displaySize(file.size)}</span>}</div>}
-              {stage === "scanning" && <div className="live-read__scanning" role="status" aria-live="polite"><LoaderCircle className="demo-spin" size={18} /><div>{progressFor(Boolean(file)).map((item, index) => <span key={item} className={index <= progressIndex ? "is-active" : undefined}>{index === progressIndex ? "●" : "○"} {item}</span>)}</div></div>}
+              {(submittedText || file) && <div className="live-read__user-bubble"><p>{submittedText || "File metadata request"}</p>{submittedUrl && <span className="live-read__detected-url">LINK EXTRACTED · {submittedUrl}</span>}{file && <span><Paperclip size={12} /> {file.name} · {displaySize(file.size)}</span>}</div>}
+              {stage === "scanning" && <div className="live-read__scanning" role="status" aria-live="polite"><LoaderCircle className="demo-spin" size={18} /><div>{progressFor(Boolean(file), Boolean(submittedUrl)).map((item, index) => <span key={item} className={index <= progressIndex ? "is-active" : undefined}>{index === progressIndex ? "●" : "○"} {item}</span>)}</div></div>}
               {stage === "error" && <div className="live-read__error" role="alert"><CircleAlert size={18} /><p>{error}</p></div>}
               {stage === "complete" && result && <article className={`live-read__result live-read__result--${result.riskLevel}`} aria-live="polite"><div className="live-read__score"><span>[ RISK READ ]</span><strong>{result.riskScore}<small>/100</small></strong><p>{result.riskLevel.toUpperCase()} · {result.verdict.replaceAll("_", " ")}</p></div><div className="live-read__result-copy"><span className={`live-read__action live-read__action--${result.simulatedResponse.action}`}>SIMULATED · {result.simulatedResponse.label}</span><p>{result.explanation}</p><div className="live-read__evidence"><section><b>TECHNICAL</b>{technicalSignals.length ? technicalSignals.slice(0, 3).map(signal => <span key={signal.id}><Check size={11} /> {signal.name}</span>) : <span><Check size={11} /> No elevated technical signal</span>}</section><section><b>HUMAN</b>{humanSignals.length ? humanSignals.slice(0, 3).map(signal => <span key={signal.id}><Check size={11} /> {signal.name}</span>) : <span><Check size={11} /> No elevated human signal</span>}</section></div><p className="live-read__recommendation">{result.recommendations[0]}</p><div className="live-read__providers">{result.providers.map(provider => <span key={provider.source}>{provider.source} · {provider.status.replaceAll("_", " ")}</span>)}</div><small>{result.simulatedResponse.disclaimer}</small></div></article>}
             </div>}
@@ -209,6 +216,7 @@ export default function LiveReadWorkspace() {
             {file && <div className="live-read__attachment"><FileUp size={15} /><div><strong>{file.name}</strong><span>{displaySize(file.size)} · {file.type || "unknown MIME"} · {hashState === "reading" ? "Calculating local SHA-256…" : hashState === "ready" ? `SHA-256 ${fileHash?.slice(0, 12)}…` : "Metadata only"}</span></div><button type="button" onClick={clearFile} aria-label="Remove attached file"><X size={14} /></button></div>}
             <label className="sr-only" htmlFor="live-read-input">Message or email to analyze</label>
             <textarea id="live-read-input" rows={3} maxLength={8000} placeholder="Paste a message, email, or request. Add an attachment when its metadata needs a safe static read…" value={text} onChange={event => { setText(event.target.value); setResult(null); setError(null); setStage("ready"); }} />
+            {detectedUrl && <p className="live-read__url-preview">LINK DETECTED · URLhaus + ThreatFox will be queried for this active scan.</p>}
             <div className="live-read__composer-actions"><input ref={fileInputRef} id="live-read-file" className="sr-only" type="file" onChange={onFileChange} /><label htmlFor="live-read-file"><Paperclip size={15} /> Attach file</label><span>Files are never uploaded, opened, or executed.</span><button type="submit" disabled={stage === "scanning"}>{stage === "scanning" ? <LoaderCircle className="demo-spin" size={15} /> : <SendHorizontal size={15} />} {stage === "scanning" ? "Reading" : "Read signal"}</button></div>
           </form>
         </section>

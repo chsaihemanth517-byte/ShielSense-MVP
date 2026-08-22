@@ -83,3 +83,8 @@
 - [x] Remove the Try the Live Read scanner from the landing hero and delete its now-unused client-side scan logic.
 - [x] Verify the preserved cinematic hero and the Get ShieldSense route to the live-reading workspace on desktop and mobile without pushing code.
 - [x] Explicitly verify the Get ShieldSense clickthrough from the landing page to `/live-read` on desktop and mobile after removing the hero scanner.
+- [x] Inspect the live-reading message submission and shared scan flow for a safe automatic URL-extraction integration point.
+- [x] Extract a valid URL from pasted text and include it with the existing message scan request so URLhaus and ThreatFox can run when eligible.
+- [x] Show the detected link and truthful provider-eligibility feedback in the live-reading workspace without changing the response-action safety boundary.
+- [x] Add tests for URL extraction, URL-bearing message scans, and message-only provider skips; then validate the running endpoint without pushing code.
+- [ ] Checkpoint the URL-extraction enhancement after the passing validation without pushing code.

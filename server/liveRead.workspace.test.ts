@@ -20,4 +20,10 @@ describe("live-reading workspace accessibility contract", () => {
     expect(source).toContain('aria-label="Remove attached file"');
     expect(source).not.toContain('tabIndex={-1}');
   });
+
+  it("shows detected-link eligibility and sends the extracted URL alongside message context", () => {
+    expect(source).toContain('url: extractedUrl');
+    expect(source).toContain('LINK DETECTED · URLhaus + ThreatFox will be queried for this active scan.');
+    expect(source).toContain('LINK EXTRACTED · {submittedUrl}');
+  });
 });

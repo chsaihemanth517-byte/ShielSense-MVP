@@ -16,6 +16,8 @@ Until the follow-up migration is applied, scans continue normally. The hero stil
 
 Run `pnpm dev`, then visit `/` to use the hero scanner, `/live-read` for the chat-style live-reading workspace, or send a `POST` request to `http://localhost:3000/api/scan` with a JSON body matching `shared/scan.ts`. `GET /api/scan-history?ids=<comma-separated-scan-ids>` returns only privacy-safe entries for scan IDs the requesting browser already knows; it never lists a global scan feed. The `/demo` route contains fictional `.example` scenarios. For an extension test, temporarily change `API_ORIGIN` at the top of `extension/background.js` to `http://localhost:3000`, then load the `extension/` folder through Chrome’s **Load unpacked** action.
 
+The Live Reading composer automatically extracts the first valid explicit `http://` or `https://` link from pasted text and sends it alongside the text for the current scan. This preserves human-manipulation analysis while making URLhaus and ThreatFox eligible for a real URL/domain lookup. The UI names the extracted link and the lookup stage; provider results still show their actual `checked`, `not_found`, `unavailable`, or `skipped` status.
+
 ## Vercel deployment
 
 Vercel discovers `api/scan.ts` and `api/scan-history.ts` as serverless functions and serves the Vite client from `dist/public`. Configure `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `URLHAUS_AUTH_KEY`, and `THREATFOX_AUTH_KEY` as server-only Vercel environment variables. Redeploy after adding the variables. The extension’s production API origin must match the deployed Vercel origin in `extension/background.js`.

@@ -242,6 +242,7 @@ button:disabled { cursor: wait; opacity: 0.68; }
 .live-read__user-bubble { align-self: flex-end; width: min(75%, 34rem); padding: 0.85rem 0.95rem; border: 1px solid rgba(60,217,168,0.38); border-radius: 0.72rem 0.72rem 0.1rem 0.72rem; color: rgba(233,236,232,0.76); background: rgba(60,217,168,0.075); font-size: 0.74rem; line-height: 1.55; }
 .live-read__user-bubble p { margin: 0; white-space: pre-wrap; }
 .live-read__user-bubble span { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.56rem; color: var(--technical); font: 500 0.54rem/1 "DM Mono", monospace; }
+.live-read__user-bubble .live-read__detected-url { display: block; max-width: 100%; overflow: hidden; color: rgba(60,217,168,0.82); text-overflow: ellipsis; white-space: nowrap; }
 .live-read__scanning, .live-read__error { display: flex; align-items: flex-start; gap: 0.7rem; max-width: 36rem; padding: 0.85rem 0.95rem; border-left: 2px solid var(--technical); background: rgba(60,217,168,0.055); }
 .live-read__scanning > svg { flex: 0 0 auto; color: var(--technical); }
 .live-read__scanning > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.36rem 0.8rem; color: rgba(233,236,232,0.32); font: 400 0.53rem/1.35 "DM Mono", monospace; }
@@ -281,6 +282,7 @@ button:disabled { cursor: wait; opacity: 0.68; }
 .live-read__attachment button:hover { color: var(--human); }
 .live-read__composer textarea { box-sizing: border-box; display: block; width: 100%; border: 0; outline: 0; resize: vertical; color: var(--mist); background: transparent; padding: 0.92rem; font: 400 0.78rem/1.5 "Manrope", sans-serif; }
 .live-read__composer textarea::placeholder { color: rgba(233,236,232,0.37); }
+.live-read__url-preview { margin: 0; padding: 0 0.92rem 0.72rem; color: var(--technical); font: 500 0.5rem/1.35 "DM Mono", monospace; }
 .live-read__composer-actions { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.75rem; border-top: 1px solid rgba(233,236,232,0.1); }
 .live-read__composer-actions label { display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; color: rgba(233,236,232,0.62); font: 500 0.55rem/1 "DM Mono", monospace; transition: color 160ms ease-out; }
 .live-read__composer-actions label:hover { color: var(--technical); }
