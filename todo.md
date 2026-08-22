@@ -87,4 +87,4 @@
 - [x] Extract a valid URL from pasted text and include it with the existing message scan request so URLhaus and ThreatFox can run when eligible.
 - [x] Show the detected link and truthful provider-eligibility feedback in the live-reading workspace without changing the response-action safety boundary.
 - [x] Add tests for URL extraction, URL-bearing message scans, and message-only provider skips; then validate the running endpoint without pushing code.
-- [ ] Checkpoint the URL-extraction enhancement after the passing validation without pushing code.
+- [x] Checkpoint the URL-extraction enhancement after the passing validation without pushing code.
