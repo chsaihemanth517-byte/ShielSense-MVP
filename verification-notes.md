@@ -21,3 +21,8 @@ The visual system maintains its near-black field, technical green, restrained hu
 | Live scan mobile review | The scan panel is responsive, retains an accessible native button, and the coarse-pointer experience disables nonessential cursor effects. | Pass after anchored overlay correction |
 | Elevated event exercise | The development-only, same-origin bridge emitted a validated `scan_complete` event with technical and human summary signals. The HUD exposed those summaries and the canvas transitioned to the split evidence state. | Pass |
 | Clear event exercise | The development-only bridge emitted a validated clear completion. The HUD reported that no elevated signal was currently reported and the canvas resolved into the clear-state orbital field. | Pass |
+| Preserved landing route | The existing full ShieldSense landing page remains served at `/` with its scroll narrative and live extension HUD intact. | Pass |
+| Hackathon demo desktop | The new `/demo` route presents the judge-facing progression from case selector to message context to two-channel read, followed by a compact proof panel. | Pass |
+| Hackathon demo mobile | The dedicated demo collapses into an ordered, touch-friendly case → message → evidence sequence; the ready-state explanation now uses a high-contrast panel over the signal field. | Pass |
+| Judge-proof desktop | The dedicated proof panel now shows the extension state, pending or completed evidence split, and response state in one visual block beneath the demo flow. | Pass |
+| Judge-proof mobile | The proof flow and proof summary collapse into a readable vertical sequence without reducing button reachability or message-context legibility. | Pass |

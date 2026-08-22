@@ -26,3 +26,13 @@
 - [x] Provide graceful idle, scanning, completed, elevated-risk, and unavailable states without fabricating scan outcomes.
 - [x] Add automated coverage for scan-event validation and scene-state mapping.
 - [x] Verify the event-driven motion behavior and accessibility fallbacks, then checkpoint the integration.
+- [x] Prioritize a hackathon demo flow that proves the two-channel read on one realistic message in under one minute.
+- [x] Add a compact judge-facing proof panel that makes the extension event, evidence split, and recommended response visible at once.
+- [x] Prepare a concise demo narrative and reserve nonessential visual refinements for after the hackathon.
+- [x] Add a dynamic judge-proof panel that combines the extension state, evidence split, and recommended response.
+- [x] Document a 45-second hackathon narration and explicit post-hackathon defer list.
+- [x] Preserve the existing ShieldSense landing page at the root route without replacing or removing its current experience.
+- [x] Create a standalone hackathon demo route with one-click analysis of a realistic message and a fast two-channel evidence reveal.
+- [x] Add clear, urgency-scam, and lookalike-domain demo cases with visible technical evidence, human-manipulation evidence, and recommended actions.
+- [x] Add a compact judge-facing proof panel explaining Extension → Two-channel signal engine → Actionable response.
+- [x] Verify the dedicated demo route on desktop and mobile, then checkpoint both routes.
