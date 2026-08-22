@@ -299,10 +299,14 @@ export default function Home() {
           </span>
           <span>SHIELDSENSE</span>
         </a>
-        <a className="top-cta" href="/live-read">
-          <span>Get ShieldSense</span>
-          <ArrowUpRight size={15} aria-hidden="true" />
-        </a>
+        <div className="site-actions" aria-label="ShieldSense experiences">
+          <a className="top-link" href="/agent">Agent Console</a>
+          <a className="top-link" href="/demo">View Demo</a>
+          <a className="top-cta" href="/live-read">
+            <span>Get ShieldSense</span>
+            <ArrowUpRight size={15} aria-hidden="true" />
+          </a>
+        </div>
       </header>
 
       <nav className="floating-nav" aria-label="Section navigation">

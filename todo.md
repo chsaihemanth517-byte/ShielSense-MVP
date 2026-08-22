@@ -101,3 +101,7 @@
 - [x] Create an original ShieldSense Agent Console with start/pause/resume/stop controls, mock inbox, live activity, incident reports, evidence, and grounded chat.
 - [x] Connect the Agent Console with existing navigation, Live Reading, history, and scan routes without breaking landing, demo, extension, or input flows.
 - [x] Checkpoint the validated bonus implementation without pushing code.
+- [x] Inspect the landing-page header and hero navigation to place clear Agent Console and Demo links without disrupting motion.
+- [x] Add ShieldSense-styled landing-page buttons linking to `/agent` and `/demo` while preserving the existing Get ShieldSense route.
+- [x] Verify the new navigation controls on desktop and mobile and run validation without pushing code.
+- [ ] Checkpoint the verified landing Agent Console and Demo navigation update without pushing code.

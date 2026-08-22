@@ -85,9 +85,11 @@ button:disabled { cursor: wait; opacity: 0.68; }
 .brand__mark span { position: absolute; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--technical); }
 .brand__mark span:first-child { width: 0.24rem; height: 0.24rem; transform: translate(-0.45rem, -0.3rem); }
 .brand__mark span:last-child { width: 0.2rem; height: 0.2rem; transform: translate(0.47rem, 0.35rem); background: var(--human); }
-.top-cta { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--mist); color: var(--void); padding: 0.65rem 0.75rem 0.65rem 0.9rem; border: 1px solid var(--mist); border-radius: 999px; font: 600 0.71rem/1 "DM Mono", monospace; letter-spacing: 0.03em; transition: transform 160ms ease-out, background 160ms ease-out; }
+.site-actions { display: flex; align-items: center; gap: 0.38rem; }.top-link { padding: 0.58rem 0.62rem; color: rgba(233,236,232,0.68); font: 500 0.58rem/1 "DM Mono", monospace; letter-spacing: 0.02em; transition: color 160ms ease-out, background 160ms ease-out; }.top-link:hover { color: var(--technical); background: rgba(60,217,168,0.08); }.top-cta { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--mist); color: var(--void); padding: 0.65rem 0.75rem 0.65rem 0.9rem; border: 1px solid var(--mist); border-radius: 999px; font: 600 0.71rem/1 "DM Mono", monospace; letter-spacing: 0.03em; transition: transform 160ms ease-out, background 160ms ease-out; }
 .top-cta:hover { background: var(--technical); border-color: var(--technical); transform: translateY(-2px); }
 .top-cta:active, .waitlist-form button:active { transform: scale(0.97); }
+
+@media (max-width: 620px) { .site-actions { gap: 0.1rem; }.top-link { padding: 0.35rem; font-size: 0.44rem; }.top-cta { padding: 0.58rem 0.62rem; font-size: 0.62rem; }.top-cta span { display: none; } }
 .floating-nav { position: fixed; z-index: 50; left: 50%; bottom: 1.25rem; display: flex; gap: 0.15rem; align-items: center; padding: 0.32rem; border: 1px solid rgba(233, 236, 232, 0.13); border-radius: 999px; background: rgba(10, 13, 12, 0.65); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25); backdrop-filter: blur(18px); transform: translateX(-50%); }
 .floating-nav a { padding: 0.6rem 0.8rem; color: rgba(233, 236, 232, 0.76); border-radius: 999px; font: 400 0.66rem/1 "DM Mono", monospace; white-space: nowrap; transition: color 160ms ease-out, background 160ms ease-out; }
 .floating-nav a.is-current, .floating-nav a:hover { color: var(--void); background: var(--technical); }
