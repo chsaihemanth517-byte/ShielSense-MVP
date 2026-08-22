@@ -2,7 +2,7 @@
 
 ## What is ready
 
-The MVP accepts explicit scan input at `POST /api/scan`, runs local technical and human-signal heuristics, queries URLhaus and ThreatFox when a URL or host is available, optionally performs structured LLM enrichment when explicitly enabled, and returns a bounded 0–100 risk assessment. The public landing-page hero now provides the same flow for a **Link**, **File**, or **Message**. The `/demo` route and Chrome extension continue using the same API and risk engine.
+The MVP accepts explicit scan input at `POST /api/scan`, runs local technical and human-signal heuristics, queries URLhaus and ThreatFox when a URL or host is available, optionally performs structured LLM enrichment when explicitly enabled, and returns a bounded 0–100 risk assessment. The public landing-page hero now provides the same flow for a **Link**, **File**, or **Message**. The main **Get ShieldSense** call-to-action now opens `/live-read`, an original-style workspace with a chat-like composer for pasted text and safe file attachments, plus a left-side privacy-safe history rail. The `/demo` route and Chrome extension continue using the same API and risk engine.
 
 File scanning is deliberately limited to static metadata: a sanitized filename, reported MIME type, byte size, and an optional SHA-256 calculated locally by the browser. ShieldSense does not upload, open, render, or execute a selected file. Static filename/MIME/size signals are treated as cautionary evidence, not malware-sandbox verdicts.
 
@@ -14,7 +14,7 @@ Until the follow-up migration is applied, scans continue normally. The hero stil
 
 ## Local development
 
-Run `pnpm dev`, then visit `/` to use the hero scanner or send a `POST` request to `http://localhost:3000/api/scan` with a JSON body matching `shared/scan.ts`. `GET /api/scan-history?ids=<comma-separated-scan-ids>` returns only privacy-safe entries for scan IDs the requesting browser already knows; it never lists a global scan feed. The `/demo` route contains fictional `.example` scenarios. For an extension test, temporarily change `API_ORIGIN` at the top of `extension/background.js` to `http://localhost:3000`, then load the `extension/` folder through Chrome’s **Load unpacked** action.
+Run `pnpm dev`, then visit `/` to use the hero scanner, `/live-read` for the chat-style live-reading workspace, or send a `POST` request to `http://localhost:3000/api/scan` with a JSON body matching `shared/scan.ts`. `GET /api/scan-history?ids=<comma-separated-scan-ids>` returns only privacy-safe entries for scan IDs the requesting browser already knows; it never lists a global scan feed. The `/demo` route contains fictional `.example` scenarios. For an extension test, temporarily change `API_ORIGIN` at the top of `extension/background.js` to `http://localhost:3000`, then load the `extension/` folder through Chrome’s **Load unpacked** action.
 
 ## Vercel deployment
 

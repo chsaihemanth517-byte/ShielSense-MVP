@@ -473,7 +473,7 @@ export default function Home() {
           </span>
           <span>SHIELDSENSE</span>
         </a>
-        <a className="top-cta" href="#waitlist">
+        <a className="top-cta" href="/live-read">
           <span>Get ShieldSense</span>
           <ArrowUpRight size={15} aria-hidden="true" />
         </a>

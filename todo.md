@@ -71,6 +71,12 @@
 - [x] Add a hero-level three-mode Link, File, and Message scan entry panel that preserves the current ShieldSense visual language and motion.
 - [x] Display validation, scan progress, live evidence, source status, simulated response, and privacy-safe recent scan history in the unified experience.
 - [x] Add tests, accessibility checks, and setup documentation for the expanded unified scan flow.
-- [ ] Validate desktop and mobile hero scanning, persistence, and history; then checkpoint the expanded MVP without pushing to GitHub.
-- [ ] Apply `supabase/migrations/20260823_expand_scan_history.sql` in the existing Supabase SQL Editor to enable durable cross-refresh history retrieval.
+- [x] Validate desktop and mobile hero scanning, persistence, and history; then checkpoint the expanded MVP without pushing to GitHub.
+- [x] Apply `supabase/migrations/20260823_expand_scan_history.sql` in the existing Supabase SQL Editor to enable durable cross-refresh history retrieval.
 - [x] Validate desktop and mobile hero layout, all three API input types, simulated response actions, session-history privacy boundaries, type checks, tests, and production build.
+- [x] Inspect and reuse the existing ShieldSense routes, scan contracts, and history flow for a dedicated live-reading workspace.
+- [x] Build an original-aesthetic live-reading workspace with a left privacy-safe history rail and chat-style pasted-text/file-metadata composer.
+- [x] Preserve static-only file behavior, explanatory scan results, simulated response actions, and no-raw-content storage in the workspace.
+- [x] Route the landing-page Get ShieldSense control to the live-reading workspace while retaining landing, demo, and extension paths.
+- [x] Verify workspace routing, desktop/mobile layout, keyboard interactions, scan history boundaries, tests, and production build without pushing code.
+- [x] Add and run focused keyboard-reachability verification for the live-reading history rail, attachment control, text composer, submit control, and back link.
