@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUpRight, Check, ChevronRight, CircleAlert, Fingerprint, LockKeyhole, Plus, Radar, ScanSearch, ShieldCheck, Sparkles } from "lucide-react";
-import { FormEvent, type CSSProperties, useEffect, useMemo, useState } from "react";
+import { FormEvent, type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { trpc } from "@/lib/trpc";
 
 type Particle = {
@@ -164,6 +164,8 @@ function WaitlistForm({ compact = false }: { compact?: boolean }) {
 }
 
 export default function Home() {
+  const heroVisualRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const scenes = Array.from(document.querySelectorAll<HTMLElement>(".story-scene"));
     const observer = new IntersectionObserver(
@@ -177,6 +179,94 @@ export default function Home() {
 
     scenes.forEach(scene => observer.observe(scene));
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const motionStages = Array.from(
+      document.querySelectorAll<HTMLElement>(".hero-visual, .threat-visual, .message-stage, .split-stage, .walkthrough-grid"),
+    );
+    let animationFrame: number | null = null;
+
+    const updateScrollChoreography = () => {
+      const viewportHeight = window.innerHeight;
+      motionStages.forEach(stage => {
+        const bounds = stage.getBoundingClientRect();
+        const progress = Math.min(1, Math.max(0, (viewportHeight - bounds.top) / (viewportHeight + bounds.height)));
+        const centered = 1 - Math.min(1, Math.abs(0.5 - progress) * 2);
+
+        stage.style.setProperty("--scroll-lift", `${((0.5 - progress) * 28).toFixed(1)}px`);
+        stage.style.setProperty("--scroll-scale", (0.955 + centered * 0.045).toFixed(3));
+
+        if (stage.classList.contains("message-stage")) {
+          stage.style.setProperty("--scan-y", `${((0.5 - progress) * 86).toFixed(1)}px`);
+          stage.style.setProperty("--scan-scale", (0.74 + centered * 0.26).toFixed(3));
+          stage.style.setProperty("--scan-opacity", (0.22 + centered * 0.78).toFixed(3));
+        }
+      });
+      animationFrame = null;
+    };
+
+    const requestUpdate = () => {
+      if (animationFrame === null) animationFrame = window.requestAnimationFrame(updateScrollChoreography);
+    };
+
+    requestUpdate();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    return () => {
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
+    };
+  }, []);
+
+  useEffect(() => {
+    const visual = heroVisualRef.current;
+    const canUsePointerDepth = window.matchMedia("(pointer: fine) and (prefers-reduced-motion: no-preference)");
+    if (!visual || !canUsePointerDepth.matches) return;
+
+    const target = { x: 0, y: 0 };
+    const current = { x: 0, y: 0 };
+    let animationFrame: number | null = null;
+
+    const render = () => {
+      current.x += (target.x - current.x) * 0.085;
+      current.y += (target.y - current.y) * 0.085;
+
+      visual.style.setProperty("--pointer-far-x", `${(current.x * 5).toFixed(2)}px`);
+      visual.style.setProperty("--pointer-far-y", `${(current.y * 4).toFixed(2)}px`);
+      visual.style.setProperty("--pointer-near-x", `${(current.x * 14).toFixed(2)}px`);
+      visual.style.setProperty("--pointer-near-y", `${(current.y * 11).toFixed(2)}px`);
+      visual.style.setProperty("--pointer-tilt", `${(current.x * 1.35).toFixed(2)}deg`);
+
+      const stillMoving = Math.abs(target.x - current.x) > 0.06 || Math.abs(target.y - current.y) > 0.06;
+      animationFrame = stillMoving ? window.requestAnimationFrame(render) : null;
+    };
+
+    const requestRender = () => {
+      if (animationFrame === null) animationFrame = window.requestAnimationFrame(render);
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      const bounds = visual.getBoundingClientRect();
+      target.x = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width - 0.5) * 2));
+      target.y = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height - 0.5) * 2));
+      requestRender();
+    };
+
+    const onPointerLeave = () => {
+      target.x = 0;
+      target.y = 0;
+      requestRender();
+    };
+
+    visual.addEventListener("pointermove", onPointerMove);
+    visual.addEventListener("pointerleave", onPointerLeave);
+    return () => {
+      visual.removeEventListener("pointermove", onPointerMove);
+      visual.removeEventListener("pointerleave", onPointerLeave);
+      if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
+    };
   }, []);
 
   return (
@@ -223,7 +313,7 @@ export default function Home() {
               See the two-channel read <ChevronRight size={16} aria-hidden="true" />
             </a>
           </div>
-          <div className="hero-visual">
+          <div className="hero-visual" ref={heroVisualRef}>
             <ParticleField state="resting" />
             <div className="hero-visual__annotation" aria-hidden="true">
               <span>signal / 02</span>

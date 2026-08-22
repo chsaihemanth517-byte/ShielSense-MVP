@@ -10,3 +10,7 @@
 - [x] Add page metadata and crawler-friendly social-preview treatment.
 - [x] Add Vitest coverage for waitlist validation and submission behavior.
 - [x] Run type checks and tests, verify desktop and mobile rendering, and complete the final project checkpoint.
+- [x] Analyze the supplied reference motion language and document a distinct ShieldSense adaptation for cursor depth, scroll pacing, and visual transitions.
+- [x] Add smooth pointer-responsive depth to the ShieldSense hero and selected signal-stage layers without compromising reduced-motion support.
+- [x] Refine the visual scenes with scroll-progress-driven state changes, depth layering, and performance-safe animation timing.
+- [x] Verify the enhanced animation system on desktop and mobile, then checkpoint the refinement.

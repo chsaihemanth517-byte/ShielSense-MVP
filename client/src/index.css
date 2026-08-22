@@ -299,3 +299,88 @@ button:disabled { cursor: wait; opacity: 0.68; }
   .scan-lock::before, .scan-lock::after { opacity: 0.78; }
   .story-scene.is-visible .scene-copy, .story-scene.is-visible .walkthrough-card { opacity: 1; transform: none; }
 }
+
+/* Motion refinement: motion is tied to reading the signal, never decoration alone. */
+.hero-visual, .threat-visual, .message-stage, .split-stage, .walkthrough-grid {
+  --scroll-lift: 0px;
+  --scroll-scale: 1;
+  --scan-y: 0px;
+  --scan-scale: 1;
+  --scan-opacity: 0.82;
+}
+.hero-visual {
+  --pointer-far-x: 0px;
+  --pointer-far-y: 0px;
+  --pointer-near-x: 0px;
+  --pointer-near-y: 0px;
+  --pointer-tilt: 0deg;
+  perspective: 950px;
+}
+.hero-visual::before {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  width: 76%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(60,217,168,0.12), rgba(60,217,168,0.035) 42%, transparent 71%);
+  content: "";
+  filter: blur(2px);
+  transform: translate3d(calc(-50% + var(--pointer-far-x)), calc(-50% + var(--pointer-far-y)), 0);
+}
+.hero-visual .particle-field {
+  transform: translate3d(var(--pointer-far-x), var(--pointer-far-y), 0) rotateY(var(--pointer-tilt)) scale(var(--scroll-scale));
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.hero-visual__annotation {
+  transform: translate3d(var(--pointer-near-x), var(--pointer-near-y), 0);
+  will-change: transform;
+}
+.threat-visual, .message-stage, .split-stage, .walkthrough-grid {
+  transform: translate3d(0, var(--scroll-lift), 0) scale(var(--scroll-scale));
+  transform-origin: center center;
+  will-change: transform;
+}
+.message-stage .scan-beam {
+  opacity: var(--scan-opacity);
+  transform: translate3d(-50%, var(--scan-y), 0) scaleY(var(--scan-scale));
+  transform-origin: center;
+  animation: none;
+  will-change: transform, opacity;
+}
+.message-stage::before {
+  transform: translate3d(0, calc(var(--scroll-lift) * -0.3), 0) scale(var(--scroll-scale));
+}
+.split-stage .scan-lock {
+  transform: translate3d(calc(-50% + var(--scroll-lift)), -50%, 0) scale(var(--scroll-scale));
+  will-change: transform;
+}
+.walkthrough-card {
+  transition: transform 600ms cubic-bezier(0.23, 1, 0.32, 1), border-color 280ms ease-out, box-shadow 280ms ease-out;
+}
+.walkthrough-card:hover {
+  border-color: rgba(60,217,168,0.55);
+  box-shadow: inset 0 1px 0 rgba(233,236,232,0.08), 0 30px 80px rgba(0,0,0,0.28), 0 0 30px rgba(60,217,168,0.08);
+  transform: translateY(-0.55rem) rotateX(1.2deg);
+}
+.walkthrough-card--3:hover { border-color: rgba(255,138,92,0.55); box-shadow: inset 0 1px 0 rgba(233,236,232,0.08), 0 30px 80px rgba(0,0,0,0.28), 0 0 30px rgba(255,138,92,0.09); }
+
+@media (prefers-reduced-motion: reduce), (pointer: coarse) {
+  .hero-visual, .threat-visual, .message-stage, .split-stage, .walkthrough-grid {
+    --scroll-lift: 0px !important;
+    --scroll-scale: 1 !important;
+    --scan-y: 0px !important;
+    --scan-scale: 1 !important;
+    --scan-opacity: 0.82 !important;
+  }
+  .hero-visual {
+    --pointer-far-x: 0px !important;
+    --pointer-far-y: 0px !important;
+    --pointer-near-x: 0px !important;
+    --pointer-near-y: 0px !important;
+    --pointer-tilt: 0deg !important;
+  }
+  .walkthrough-card:hover { transform: none; }
+}
