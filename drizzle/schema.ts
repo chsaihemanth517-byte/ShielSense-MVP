@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -25,4 +25,17 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/** Public waitlist registrations gathered from the ShieldSense landing page. */
+export const waitlistSignups = mysqlTable(
+  "waitlist_signups",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    email: varchar("email", { length: 320 }).notNull(),
+    source: varchar("source", { length: 64 }).notNull().default("landing_page"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  table => [uniqueIndex("waitlist_email_unique").on(table.email)],
+);
+
+export type WaitlistSignup = typeof waitlistSignups.$inferSelect;
+export type InsertWaitlistSignup = typeof waitlistSignups.$inferInsert;
