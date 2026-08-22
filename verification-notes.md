@@ -26,3 +26,5 @@ The visual system maintains its near-black field, technical green, restrained hu
 | Hackathon demo mobile | The dedicated demo collapses into an ordered, touch-friendly case → message → evidence sequence; the ready-state explanation now uses a high-contrast panel over the signal field. | Pass |
 | Judge-proof desktop | The dedicated proof panel now shows the extension state, pending or completed evidence split, and response state in one visual block beneath the demo flow. | Pass |
 | Judge-proof mobile | The proof flow and proof summary collapse into a readable vertical sequence without reducing button reachability or message-context legibility. | Pass |
+| Audience section desktop | The left side now continues from the audience headline into a two-channel context panel, filling the previously unused vertical space while leaving the audience list clear on the right. | Pass |
+| Audience section mobile | The context panel stacks below the headline before the audience list, preserving a clear reading order and a contained signal visual. | Pass |

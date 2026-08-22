@@ -496,6 +496,18 @@ export default function Home() {
             <div className="scene-copy">
               <p className="eyebrow">[ WHO IT IS FOR ]</p>
               <h2>For anyone who receives a message before they can investigate it.</h2>
+              <div className="audience-signal-card" aria-label="ShieldSense reads two types of context together">
+                <CinematicSignalField mode="split" />
+                <div className="audience-signal-card__copy">
+                  <p>[ ONE MESSAGE, TWO CONTEXTS ]</p>
+                  <strong>The signal is never just the link.</strong>
+                  <span>ShieldSense reads what the message does and what it asks a person to feel.</span>
+                </div>
+                <div className="audience-signal-card__channels" aria-hidden="true">
+                  <span>TECHNICAL CONTEXT</span>
+                  <span>HUMAN CONTEXT</span>
+                </div>
+              </div>
             </div>
             <div className="audience-list">
               <p><span>01</span> Everyday people making ordinary decisions online.</p>

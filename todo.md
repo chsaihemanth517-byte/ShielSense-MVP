@@ -36,3 +36,5 @@
 - [x] Add clear, urgency-scam, and lookalike-domain demo cases with visible technical evidence, human-manipulation evidence, and recommended actions.
 - [x] Add a compact judge-facing proof panel explaining Extension → Two-channel signal engine → Actionable response.
 - [x] Verify the dedicated demo route on desktop and mobile, then checkpoint both routes.
+- [x] Use the unused “Who it is for” space to add a visual two-channel audience context panel without crowding the original audience list.
+- [x] Verify the revised audience section on desktop and mobile, then checkpoint the refinement.
