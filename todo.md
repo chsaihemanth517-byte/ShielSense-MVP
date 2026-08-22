@@ -80,3 +80,6 @@
 - [x] Route the landing-page Get ShieldSense control to the live-reading workspace while retaining landing, demo, and extension paths.
 - [x] Verify workspace routing, desktop/mobile layout, keyboard interactions, scan history boundaries, tests, and production build without pushing code.
 - [x] Add and run focused keyboard-reachability verification for the live-reading history rail, attachment control, text composer, submit control, and back link.
+- [x] Remove the Try the Live Read scanner from the landing hero and delete its now-unused client-side scan logic.
+- [x] Verify the preserved cinematic hero and the Get ShieldSense route to the live-reading workspace on desktop and mobile without pushing code.
+- [x] Explicitly verify the Get ShieldSense clickthrough from the landing page to `/live-read` on desktop and mobile after removing the hero scanner.

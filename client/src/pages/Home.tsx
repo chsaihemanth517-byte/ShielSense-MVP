@@ -1,10 +1,9 @@
 import { ArrowDown, ArrowUpRight, Check, ChevronRight, CircleAlert, Fingerprint, LockKeyhole, Plus, Radar, ScanSearch, ShieldCheck, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
+import type { FormEvent } from "react";
 import { CinematicSignalField } from "@/components/CinematicSignalField";
 import { useExtensionScan } from "@/hooks/useExtensionScan";
 import { trpc } from "@/lib/trpc";
-import type { ScanHistoryEntry, ScanInputType, ScanResult } from "@shared/scan";
 
 const sceneLinks = [
   { label: "Home", href: "#home" },
@@ -54,47 +53,6 @@ const faqs = [
       "ShieldSense is being built around data minimization. The product will clearly explain what it needs to analyze a message or link, and the waitlist is only used to share launch information—never sold to third parties.",
   },
 ];
-
-type HeroScanStage = "ready" | "scanning" | "complete" | "error";
-type HeroScanMode = ScanInputType;
-
-const HERO_HISTORY_STORAGE_KEY = "shieldsense.hero-scan-ids.v1";
-
-function progressStagesFor(mode: HeroScanMode) {
-  if (mode === "file") return ["VALIDATING METADATA", "STATIC HEURISTIC ANALYSIS", "CORRELATING SIGNALS", "RISK ASSESSMENT"];
-  if (mode === "message") return ["VALIDATING MESSAGE", "HUMAN-SIGNAL HEURISTICS", "CORRELATING SIGNALS", "RISK ASSESSMENT"];
-  return ["VALIDATING LINK", "HEURISTIC ANALYSIS", "THREAT-INTELLIGENCE LOOKUPS", "RISK ASSESSMENT"];
-}
-
-function historyEntryFromResult(result: ScanResult, identifier: string): ScanHistoryEntry {
-  return {
-    scanId: result.scanId,
-    createdAt: new Date().toISOString(),
-    inputType: result.inputType,
-    inputIdentifier: identifier,
-    riskScore: result.riskScore,
-    riskLevel: result.riskLevel,
-    verdict: result.verdict,
-    responseAction: result.simulatedResponse.action,
-  };
-}
-
-function formattedFileSize(size: number) {
-  if (size < 1024 * 1024) return `${Math.ceil(size / 1024)} KB`;
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function formattedHistoryTime(value: string) {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "Just now" : new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(date);
-}
-
-async function sha256ForFile(file: File) {
-  if (!window.crypto?.subtle) return undefined;
-  const buffer = await file.arrayBuffer();
-  const digest = await window.crypto.subtle.digest("SHA-256", buffer);
-  return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
-}
 
 function WaitlistForm({ compact = false }: { compact?: boolean }) {
   const [email, setEmail] = useState("");
@@ -162,18 +120,6 @@ export default function Home() {
   const cursorRef = useRef<HTMLSpanElement>(null);
   const [activeSection, setActiveSection] = useState("home");
   const liveScan = useExtensionScan();
-  const [scanMode, setScanMode] = useState<HeroScanMode>("url");
-  const [linkValue, setLinkValue] = useState("");
-  const [messageValue, setMessageValue] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [fileHash, setFileHash] = useState<string | undefined>();
-  const [fileHashState, setFileHashState] = useState<"idle" | "reading" | "ready" | "unavailable">("idle");
-  const [heroStage, setHeroStage] = useState<HeroScanStage>("ready");
-  const [progressIndex, setProgressIndex] = useState(0);
-  const [heroResult, setHeroResult] = useState<ScanResult | null>(null);
-  const [heroError, setHeroError] = useState<string | null>(null);
-  const [scanHistory, setScanHistory] = useState<ScanHistoryEntry[]>([]);
-  const [showHistory, setShowHistory] = useState(false);
   const scanStatus =
     liveScan.connectionState === "scanning"
       ? "Reading the technical and human signal channels…"
@@ -184,126 +130,6 @@ export default function Home() {
         : liveScan.connectionState === "unavailable"
           ? "ShieldSense extension not detected. Connect the extension to stream a real scan."
           : "Waiting for an authorized ShieldSense extension.";
-
-  useEffect(() => {
-    const stored = window.sessionStorage.getItem(HERO_HISTORY_STORAGE_KEY);
-    const ids = stored ? stored.split(",").filter(id => /^[a-f0-9-]{36}$/i.test(id)).slice(0, 5) : [];
-    if (!ids.length) return;
-    void fetch(`/api/scan-history?ids=${encodeURIComponent(ids.join(","))}`)
-      .then(response => response.ok ? response.json() as Promise<{ entries?: ScanHistoryEntry[] }> : { entries: [] })
-      .then(payload => {
-        if (payload.entries?.length) setScanHistory(payload.entries);
-      })
-      .catch(() => undefined);
-  }, []);
-
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] ?? null;
-    setSelectedFile(file);
-    setFileHash(undefined);
-    setHeroError(null);
-    setHeroResult(null);
-    setHeroStage("ready");
-    if (!file) {
-      setFileHashState("idle");
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      setFileHashState("unavailable");
-      setHeroError("Choose a file no larger than 10 MB. ShieldSense will only read safe metadata and a local hash.");
-      return;
-    }
-    setFileHashState("reading");
-    try {
-      const hash = await sha256ForFile(file);
-      setFileHash(hash);
-      setFileHashState(hash ? "ready" : "unavailable");
-    } catch {
-      setFileHashState("unavailable");
-    }
-  };
-
-  const appendHistory = async (result: ScanResult, identifier: string) => {
-    const localEntry = historyEntryFromResult(result, identifier);
-    setScanHistory(current => [localEntry, ...current.filter(entry => entry.scanId !== localEntry.scanId)].slice(0, 5));
-    const existing = window.sessionStorage.getItem(HERO_HISTORY_STORAGE_KEY)?.split(",").filter(Boolean) ?? [];
-    const ids = [result.scanId, ...existing.filter(id => id !== result.scanId)].slice(0, 5);
-    window.sessionStorage.setItem(HERO_HISTORY_STORAGE_KEY, ids.join(","));
-    if (!result.privacy.metadataPersisted) return;
-    try {
-      const response = await fetch(`/api/scan-history?ids=${encodeURIComponent(ids.join(","))}`);
-      const payload = await response.json() as { entries?: ScanHistoryEntry[] };
-      if (response.ok && payload.entries?.length) setScanHistory(payload.entries);
-    } catch {
-      // The browser-session summary remains available without exposing raw input.
-    }
-  };
-
-  const submitHeroScan = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setHeroError(null);
-    setHeroResult(null);
-    let payload: Record<string, unknown>;
-    let historyIdentifier: string;
-    if (scanMode === "url") {
-      let normalizedUrl = linkValue.trim();
-      if (normalizedUrl && !/^https?:\/\//i.test(normalizedUrl)) normalizedUrl = `https://${normalizedUrl}`;
-      try {
-        new URL(normalizedUrl);
-      } catch {
-        setHeroStage("error");
-        setHeroError("Enter a complete web address, such as https://example.com.");
-        return;
-      }
-      historyIdentifier = "Submitted link";
-      payload = { url: normalizedUrl, sourceContext: "hero_url", persistMetadata: true };
-    } else if (scanMode === "message") {
-      const message = messageValue.trim();
-      if (!message) {
-        setHeroStage("error");
-        setHeroError("Paste the email or message you want ShieldSense to read.");
-        return;
-      }
-      historyIdentifier = "Pasted message";
-      payload = { pastedMessage: message, sourceContext: "hero_message", persistMetadata: true };
-    } else {
-      if (!selectedFile) {
-        setHeroStage("error");
-        setHeroError("Choose a file before starting a static metadata scan.");
-        return;
-      }
-      if (selectedFile.size > 10 * 1024 * 1024) {
-        setHeroStage("error");
-        setHeroError("Choose a file no larger than 10 MB.");
-        return;
-      }
-      historyIdentifier = selectedFile.name.replace(/[^\w. ()-]/g, "_").slice(0, 180) || "Selected file";
-      payload = {
-        file: { name: historyIdentifier, size: selectedFile.size, mimeType: selectedFile.type || "application/octet-stream", sha256: fileHash },
-        sourceContext: "hero_file",
-        persistMetadata: true,
-      };
-    }
-
-    setHeroStage("scanning");
-    setProgressIndex(0);
-    const stages = progressStagesFor(scanMode);
-    const progressTimer = window.setInterval(() => setProgressIndex(current => Math.min(current + 1, stages.length - 1)), 420);
-    try {
-      const response = await fetch("/api/scan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      const scanPayload = await response.json() as ScanResult | { message?: string };
-      if (!response.ok || !("riskScore" in scanPayload)) throw new Error("message" in scanPayload ? scanPayload.message : "The analysis service did not return a valid result.");
-      setProgressIndex(stages.length - 1);
-      setHeroResult(scanPayload);
-      setHeroStage("complete");
-      void appendHistory(scanPayload, historyIdentifier);
-    } catch (error) {
-      setHeroStage("error");
-      setHeroError(error instanceof Error ? error.message : "ShieldSense could not complete this scan. Please try again.");
-    } finally {
-      window.clearInterval(progressTimer);
-    }
-  };
 
   useEffect(() => {
     const scenes = Array.from(document.querySelectorAll<HTMLElement>(".story-scene"));
@@ -499,31 +325,6 @@ export default function Home() {
             <p className="scene-lede">
               ShieldSense reads technical threat signals and human-manipulation signals together—then makes the safest next move easier to see.
             </p>
-            <form className={`hero-scan-panel hero-scan-panel--${heroStage}`} onSubmit={submitHeroScan} noValidate aria-label="Scan a link, file, or message">
-              <div className="hero-scan-panel__head">
-                <p>[ TRY THE LIVE READ ]</p>
-                <button type="button" className="hero-scan-panel__history-toggle" onClick={() => setShowHistory(current => !current)} aria-expanded={showHistory}>
-                  {showHistory ? "Close history" : `Recent scans${scanHistory.length ? ` · ${scanHistory.length}` : ""}`}
-                </button>
-              </div>
-              <div className="hero-scan-tabs" aria-label="Choose scan type">
-                {(["url", "file", "message"] as const).map(mode => (
-                  <button key={mode} type="button" aria-pressed={scanMode === mode} className={scanMode === mode ? "is-active" : undefined} onClick={() => { setScanMode(mode); setHeroStage("ready"); setHeroError(null); setHeroResult(null); }}>
-                    {mode === "url" ? "Link" : mode === "file" ? "File" : "Message"}
-                  </button>
-                ))}
-              </div>
-              <div className="hero-scan-panel__field">
-                {scanMode === "url" && <><label htmlFor="hero-scan-url">Web address</label><input id="hero-scan-url" type="url" inputMode="url" autoComplete="url" placeholder="https://example.com" value={linkValue} onChange={event => { setLinkValue(event.target.value); setHeroStage("ready"); setHeroResult(null); }} /></>}
-                {scanMode === "message" && <><label htmlFor="hero-scan-message">Email or message</label><textarea id="hero-scan-message" rows={3} maxLength={8000} placeholder="Paste a message to inspect its wording and pressure signals…" value={messageValue} onChange={event => { setMessageValue(event.target.value); setHeroStage("ready"); setHeroResult(null); }} /></>}
-                {scanMode === "file" && <div className="hero-file-field"><label htmlFor="hero-scan-file">Choose a file</label><input id="hero-scan-file" type="file" onChange={handleFileChange} aria-describedby="hero-file-privacy" /><p id="hero-file-privacy">Metadata and a local SHA-256 only. ShieldSense never uploads, opens, or executes this file.</p>{selectedFile && <div className="hero-file-field__meta"><span>{selectedFile.name}</span><span>{formattedFileSize(selectedFile.size)} · {selectedFile.type || "unknown MIME"}</span><span>{fileHashState === "reading" ? "Calculating local SHA-256…" : fileHashState === "ready" ? `SHA-256 ${fileHash?.slice(0, 12)}…` : "Hash unavailable; metadata checks still apply."}</span></div>}</div>}
-              </div>
-              <div className="hero-scan-panel__action"><button type="submit" disabled={heroStage === "scanning"}>{heroStage === "scanning" ? "Reading signal…" : scanMode === "file" ? "Inspect file metadata" : "Run ShieldSense scan"}</button><span>Explicit scan only · raw input is not stored</span></div>
-              {heroStage === "scanning" && <div className="hero-scan-progress" role="status" aria-live="polite">{progressStagesFor(scanMode).map((stage, index) => <span key={stage} className={index <= progressIndex ? "is-active" : undefined}>{index === progressIndex ? "●" : "○"} {stage}</span>)}</div>}
-              {heroStage === "error" && heroError && <p className="hero-scan-error" role="alert">{heroError}</p>}
-              {heroStage === "complete" && heroResult && <article className={`hero-scan-result hero-scan-result--${heroResult.riskLevel}`} aria-live="polite"><div className="hero-scan-result__summary"><p>[ RESULT ]</p><strong>{heroResult.riskScore}<small>/100</small></strong><span>{heroResult.riskLevel.toUpperCase()} · {heroResult.verdict.replaceAll("_", " ")}</span></div><div className="hero-scan-result__body"><span className={`hero-scan-response hero-scan-response--${heroResult.simulatedResponse.action}`}>SIMULATED · {heroResult.simulatedResponse.label}</span><p>{heroResult.explanation}</p><div className="hero-scan-evidence">{heroResult.signals.length ? heroResult.signals.slice(0, 3).map(signal => <span key={signal.id}>{signal.channel === "technical" ? "TECH" : "HUMAN"} · {signal.name}</span>) : <span>NO ELEVATED LOCAL SIGNAL</span>}</div><p className="hero-scan-recommendation">{heroResult.recommendations[0]}</p><div className="hero-scan-providers">{heroResult.providers.map(provider => <span key={provider.source}>{provider.source} · {provider.status.replaceAll("_", " ")}</span>)}</div><small>{heroResult.simulatedResponse.disclaimer}</small></div></article>}
-              {showHistory && <div className="hero-scan-history" aria-live="polite"><p>[ PRIVACY-SAFE RECENT HISTORY · NEWEST FIRST ]</p>{scanHistory.length ? scanHistory.map(entry => <div key={entry.scanId}><span><b>{entry.inputType.toUpperCase()} · {entry.inputIdentifier}</b><small>{formattedHistoryTime(entry.createdAt)} · {entry.riskLevel.toUpperCase()} · {entry.verdict.replaceAll("_", " ")}</small></span><span className={`history-risk history-risk--${entry.riskLevel}`}>{entry.riskScore}/100 · {entry.responseAction.toUpperCase()}</span></div>) : <span>No scans in this browser session yet. Raw links, messages, and files are never listed here.</span>}</div>}
-            </form>
             <a className="text-link" href="#how-it-works">
               See the two-channel read <ChevronRight size={16} aria-hidden="true" />
             </a>
