@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ShieldSense</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <header><span class="mark">◈</span><span>SHIELDSENSE</span><small>EXPLICIT SCAN</small></header>
+      <p class="intro">Read technical and human signals before you act. Nothing is sent until you choose a scan.</p>
+      <div class="controls">
+        <button id="active-tab">Analyze active tab</button>
+        <button id="selection" class="secondary">Analyze selected text</button>
+      </div>
+      <label for="paste">Paste a message</label>
+      <textarea id="paste" maxlength="8000" placeholder="Paste text only when you choose to analyze it."></textarea>
+      <button id="pasted" class="secondary">Analyze pasted message</button>
+      <p id="status" role="status" aria-live="polite">Ready. No data has been sent.</p>
+      <section id="result" hidden>
+        <div class="result-head"><span id="risk-level"></span><b id="score"></b></div>
+        <p id="recommendation"></p>
+        <div class="channels"><div><span>TECHNICAL</span><ul id="technical"></ul></div><div><span>HUMAN</span><ul id="human"></ul></div></div>
+      </section>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

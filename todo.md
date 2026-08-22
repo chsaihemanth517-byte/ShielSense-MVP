@@ -46,3 +46,22 @@
 - [x] Diagnose why the Vercel production URL renders ShieldSense source files instead of the built application.
 - [x] Add the minimum Vercel-compatible build and routing configuration needed to serve the ShieldSense app.
 - [x] Validate the production build, push the deployment fix to GitHub, and verify the Vercel URL serves the application.
+- [x] Create safe, fictional phishing-simulation fixtures using reserved domains, non-credential prompts, and inert attachment metadata only.
+- [x] Add a clear usage note explaining that the fixtures are for local ShieldSense demos and must not be delivered as emails or files.
+- [x] Deliver the safe demo fixtures directly to the user without committing, pushing, or publishing them.
+- [x] Prepare a concise live-pitch sequence for the safe mock cases that demonstrates the two-channel read and actionable response.
+- [x] Inspect the current ShieldSense architecture and preserve working landing, demo, extension bridge, and Vercel configuration.
+- [x] Define privacy-minimized scan contracts, risk-level configuration, threat-result contracts, and Supabase metadata schema.
+- [x] Implement explainable local URL/domain and social-engineering text heuristics with a configurable 0–100 risk engine.
+- [x] Add resilient PhishTank, URLhaus, ThreatFox, and optional LLM adapters with isolated provider failures and source attribution.
+- [x] Build the server-side scan orchestration API, Supabase persistence abstraction, migration SQL, and Vercel function configuration.
+- [x] Connect live scan results, source states, evidence, risk score, and recommendations to the ShieldSense interface.
+- [x] Create a Chrome Manifest V3 extension for explicit active-tab, selected-text, and pasted-message scan requests with minimal permissions.
+- [x] Add tests, environment templates, Supabase and Vercel setup documentation, extension-loading instructions, and deployment guidance.
+- [x] Validate local and configured end-to-end flows, checkpoint the MVP, and document remaining secret or provider blockers.
+- [x] Apply `supabase/migrations/20260822_create_scan_metadata.sql` in the supplied Supabase project SQL Editor to activate opt-in scan metadata persistence.
+- [x] Apply the explicit `service_role` table grants for `scan_metadata` in the Supabase SQL Editor, then verify `metadataPersisted: true`.
+- [x] Run a post-grant opt-in scan and confirm its privacy-safe metadata is accepted by Supabase.
+- [x] Remove PhishTank from the active scan pipeline, credentials, environment documentation, and result-source presentation.
+- [x] Validate the supplied Supabase, URLhaus, and ThreatFox credentials through server-only configuration checks.
+- [x] Store the supplied Supabase, URLhaus, and ThreatFox values in server-only project configuration without exposing them to client code.

@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "ShieldSense MVP",
+  "version": "0.1.0",
+  "description": "Read technical threat signals and human-manipulation signals before you act.",
+  "action": {
+    "default_title": "ShieldSense scan",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
+  "host_permissions": [
+    "https://shield-sense-landing-page-industry.vercel.app/*",
+    "http://localhost:3000/*"
+  ]
+}

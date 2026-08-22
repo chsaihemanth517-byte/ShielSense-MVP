@@ -30,3 +30,10 @@ The visual system maintains its near-black field, technical green, restrained hu
 | Audience section mobile | The context panel stacks below the headline before the audience list, preserving a clear reading order and a contained signal visual. | Pass |
 | Audience-column content review | The desktop audience grid now spans 1,137 px at a 1,280 px viewport. The audience column is 647 px wide and each description receives 551 px of text width, producing the requested broad middle/right editorial composition. | Pass |
 | Audience-column mobile review | The full-width desktop grid correctly returns to the established single-column mobile reading order, with the enriched audience descriptions remaining contained and legible. | Pass |
+
+| MVP validation check | Finding | Status |
+|---|---|---|
+| Live scan API | `POST /api/scan` returned an explainable, bounded risk assessment from a safe reserved-domain fixture, including technical and human channels plus source states. | Pass |
+| Provider configuration | Server-only Supabase, URLhaus, and ThreatFox credential tests passed. PhishTank is intentionally excluded from the active provider list. | Pass |
+| Supabase persistence | An opt-in scan completed with `metadataPersisted: true` after the migration and `service_role` grants were applied. The persisted model retains summary metadata only. | Pass |
+| Build and extension | Type checking, production build, and all 13 Vitest checks passed. The Manifest V3 extension manifest was tested for minimal explicit-scan permissions. | Pass |
