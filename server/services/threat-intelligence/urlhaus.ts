@@ -8,6 +8,7 @@ type URLhausResponse = {
   tags?: string[];
   payloads?: Array<{ signature?: string; file_type?: string }>;
 };
+const URLHAUS_TIMEOUT_MS = 9000;
 
 export async function checkURLhaus(url: string): Promise<ThreatIntelResult> {
   const normalizedUrl = normaliseScanUrl(url);
@@ -21,7 +22,7 @@ export async function checkURLhaus(url: string): Promise<ThreatIntelResult> {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded", "Auth-Key": authKey, "User-Agent": "ShieldSense-MVP/1.0" },
       body: new URLSearchParams({ url: normalizedUrl }),
-    });
+    }, URLHAUS_TIMEOUT_MS);
     if (response.status === 429 || response.status === 509) return providerUnavailable("URLhaus", "rate_limited", "URLhaus rate limited this lookup.");
     if (!response.ok) return providerUnavailable("URLhaus", `http_${response.status}`, "URLhaus could not complete this lookup.");
     const payload = (await response.json()) as URLhausResponse;

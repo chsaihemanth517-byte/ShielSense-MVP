@@ -88,3 +88,8 @@
 - [x] Show the detected link and truthful provider-eligibility feedback in the live-reading workspace without changing the response-action safety boundary.
 - [x] Add tests for URL extraction, URL-bearing message scans, and message-only provider skips; then validate the running endpoint without pushing code.
 - [x] Checkpoint the URL-extraction enhancement after the passing validation without pushing code.
+- [x] Confirm the current pipeline behavior for a current ThreatFox IP:port IOC and identify whether URL parsing drops the port before lookup.
+- [x] Preserve explicit literal-IP ports for ThreatFox IOC matching while retaining safe URL parsing and existing domain lookups.
+- [x] Add tests and run a current known IP:port IOC through the ShieldSense API to verify a real provider hit, elevated risk, and simulated response mapping.
+- [ ] Checkpoint the verified IP-inspection enhancement without pushing code.
+- [x] Stabilize the bounded URLhaus timeout exposed during live IOC verification, then rerun provider checks and the complete test suite.

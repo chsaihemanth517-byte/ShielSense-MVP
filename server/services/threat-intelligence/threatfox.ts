@@ -3,8 +3,9 @@ import { fetchJson, isIpAddress, providerNotFound, providerSkipped, providerUnav
 
 type ThreatFoxRecord = { ioc?: string; ioc_type?: string; malware_printable?: string; confidence_level?: number; threat_type?: string; first_seen?: string };
 type ThreatFoxResponse = { query_status?: string; data?: ThreatFoxRecord[] };
+const THREATFOX_TIMEOUT_MS = 9000;
 
-async function checkThreatFoxIndicator(indicator: string, expected: "domain" | "ip"): Promise<ThreatIntelResult> {
+async function checkThreatFoxIndicator(indicator: string, expected: "domain" | "ip" | "ip:port"): Promise<ThreatIntelResult> {
   if (!indicator) return providerSkipped("ThreatFox", `No ${expected} indicator was available for lookup.`);
   const authKey = process.env.THREATFOX_AUTH_KEY;
   if (!authKey) return providerUnavailable("ThreatFox", "missing_configuration", "ThreatFox is not configured.");
@@ -15,7 +16,7 @@ async function checkThreatFoxIndicator(indicator: string, expected: "domain" | "
       method: "POST",
       headers: { "Content-Type": "application/json", "Auth-Key": authKey, "User-Agent": "ShieldSense-MVP/1.0" },
       body: JSON.stringify({ query: "search_ioc", search_term: indicator, exact_match: true }),
-    });
+    }, THREATFOX_TIMEOUT_MS);
     if (response.status === 429 || response.status === 509) return providerUnavailable("ThreatFox", "rate_limited", "ThreatFox rate limited this lookup.");
     if (!response.ok) return providerUnavailable("ThreatFox", `http_${response.status}`, "ThreatFox could not complete this lookup.");
     const payload = (await response.json()) as ThreatFoxResponse;
@@ -45,6 +46,15 @@ export function checkThreatFoxIP(ip: string) {
   return checkThreatFoxIndicator(ip, "ip");
 }
 
+function isIpAddressWithPort(value: string) {
+  const separator = value.lastIndexOf(":");
+  if (separator < 1) return false;
+  const host = value.slice(0, separator);
+  const port = Number(value.slice(separator + 1));
+  return isIpAddress(host) && Number.isInteger(port) && port > 0 && port <= 65535;
+}
+
 export function checkThreatFoxHost(host: string): Promise<ThreatIntelResult> {
+  if (isIpAddressWithPort(host)) return checkThreatFoxIndicator(host, "ip:port");
   return isIpAddress(host) ? checkThreatFoxIP(host) : checkThreatFoxDomain(host);
 }
