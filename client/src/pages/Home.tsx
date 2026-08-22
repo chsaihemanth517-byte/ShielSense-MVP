@@ -2,6 +2,7 @@ import { ArrowDown, ArrowUpRight, Check, ChevronRight, CircleAlert, Fingerprint,
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { CinematicSignalField } from "@/components/CinematicSignalField";
+import { useExtensionScan } from "@/hooks/useExtensionScan";
 import { trpc } from "@/lib/trpc";
 
 const sceneLinks = [
@@ -118,6 +119,17 @@ export default function Home() {
   const heroVisualRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLSpanElement>(null);
   const [activeSection, setActiveSection] = useState("home");
+  const liveScan = useExtensionScan();
+  const scanStatus =
+    liveScan.connectionState === "scanning"
+      ? "Reading the technical and human signal channels…"
+      : liveScan.connectionState === "complete"
+        ? liveScan.verdict === "clear"
+          ? "Scan complete. No elevated signal is currently reported."
+          : "Scan complete. Evidence channels need your attention."
+        : liveScan.connectionState === "unavailable"
+          ? "ShieldSense extension not detected. Connect the extension to stream a real scan."
+          : "Waiting for an authorized ShieldSense extension.";
 
   useEffect(() => {
     const scenes = Array.from(document.querySelectorAll<HTMLElement>(".story-scene"));
@@ -318,11 +330,27 @@ export default function Home() {
             </a>
           </div>
           <div className="hero-visual" ref={heroVisualRef}>
-            <CinematicSignalField mode="coherent" />
+            <CinematicSignalField mode={liveScan.sceneMode} />
             <div className="hero-visual__orbital" aria-hidden="true"><span /><span /><span /></div>
             <div className="hero-visual__annotation" aria-hidden="true">
-              <span>signal / 02</span>
-              <span>message analysis</span>
+              <span>signal / {liveScan.connectionState === "complete" ? "live" : "02"}</span>
+              <span>{liveScan.connectionState === "scanning" ? "analysis in motion" : "message analysis"}</span>
+            </div>
+            <div className={`live-scan-hud live-scan-hud--${liveScan.connectionState} ${liveScan.verdict === "clear" ? "live-scan-hud--clear" : ""}`} role="status" aria-live="polite">
+              <div className="live-scan-hud__head">
+                <span className="live-scan-hud__pulse" aria-hidden="true" />
+                <span>LIVE EXTENSION SIGNAL</span>
+              </div>
+              <p>{scanStatus}</p>
+              {liveScan.connectionState === "complete" && (
+                <div className="live-scan-hud__signals">
+                  {liveScan.technicalSignals.slice(0, 2).map(signal => <span key={signal}>TECH / {signal.replaceAll("_", " ")}</span>)}
+                  {liveScan.humanSignals.slice(0, 2).map(signal => <span key={signal}>HUMAN / {signal.replaceAll("_", " ")}</span>)}
+                </div>
+              )}
+              <button type="button" onClick={liveScan.requestScan} disabled={liveScan.connectionState === "scanning"}>
+                {liveScan.connectionState === "scanning" ? "Reading signal…" : "Request live scan"}
+              </button>
             </div>
           </div>
           <a className="scroll-cue" href="#threat">

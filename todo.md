@@ -21,3 +21,8 @@
 - [x] Add a restrained custom signal cursor, depth-aware card motion, and premium interaction feedback for fine-pointer devices.
 - [x] Rebalance typography, atmosphere, framing, navigation, and FAQ styling into one cohesive ShieldSense signal-intelligence design system.
 - [x] Verify performance, mobile behavior, keyboard accessibility, and reduced-motion equivalents for the cinematic experience, then checkpoint the upgrade.
+- [x] Define a documented, validated extension scan-event contract that does not expose message content by default.
+- [x] Connect cinematic canvas states and the landing-page scan panel to real extension scan events through a trusted origin bridge.
+- [x] Provide graceful idle, scanning, completed, elevated-risk, and unavailable states without fabricating scan outcomes.
+- [x] Add automated coverage for scan-event validation and scene-state mapping.
+- [x] Verify the event-driven motion behavior and accessibility fallbacks, then checkpoint the integration.
