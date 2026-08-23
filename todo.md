@@ -120,6 +120,6 @@
 - [x] Repair the common Vercel ESM module-resolution failure by using explicit `.js` runtime imports and add regression coverage for the full scan and agent dependency graph.
 - [x] Save a checkpoint for the verified local Vercel ESM repair without pushing code.
 - [x] Repair the remaining Agent-only shared-contract ESM import discovered during the first production redeploy, and validate the full regression suite again.
-- [ ] Save a checkpoint for the final shared-Agent ESM correction before its approved production release.
+- [x] Save a checkpoint for the final shared-Agent ESM correction before its approved production release.
 - [ ] With explicit user approval, configure the four required Vercel production environment variables and push the verified repair to trigger a production redeploy.
 - [ ] Verify the post-redeploy production `/api/scan`, `/api/agent/scan`, and `/api/chat` endpoints and close the production deployment investigation.
