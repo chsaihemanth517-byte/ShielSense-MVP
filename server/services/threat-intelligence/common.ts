@@ -1,4 +1,4 @@
-import type { ThreatIntelResult } from "@shared/scan";
+import type { ThreatIntelResult } from "../../../shared/scan.js";
 
 export const PROVIDER_TIMEOUT_MS = 4500;
 

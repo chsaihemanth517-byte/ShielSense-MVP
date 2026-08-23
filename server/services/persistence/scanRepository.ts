@@ -1,4 +1,4 @@
-import { scanHistoryEntrySchema, type ScanHistoryEntry, type ScanResult, type ScanSourceContext } from "../../../shared/scan";
+import { scanHistoryEntrySchema, type ScanHistoryEntry, type ScanResult, type ScanSourceContext } from "../../../shared/scan.js";
 
 export type ScanMetadataRecord = {
   scanId: string;

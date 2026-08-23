@@ -1,4 +1,4 @@
-import type { ScanRequest, ThreatSignal } from "@shared/scan";
+import type { ScanRequest, ThreatSignal } from "../../../shared/scan.js";
 
 type UrlSignalRule = {
   id: string;

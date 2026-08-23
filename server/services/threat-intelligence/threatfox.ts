@@ -1,5 +1,5 @@
-import type { ThreatIntelResult } from "@shared/scan";
-import { fetchJson, isIpAddress, providerNotFound, providerSkipped, providerUnavailable } from "./common";
+import type { ThreatIntelResult } from "../../../shared/scan.js";
+import { fetchJson, isIpAddress, providerNotFound, providerSkipped, providerUnavailable } from "./common.js";
 
 type ThreatFoxRecord = { ioc?: string; ioc_type?: string; malware_printable?: string; confidence_level?: number; threat_type?: string; first_seen?: string };
 type ThreatFoxResponse = { query_status?: string; data?: ThreatFoxRecord[] };

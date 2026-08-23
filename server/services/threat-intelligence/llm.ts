@@ -1,6 +1,6 @@
-import type { ThreatIntelResult, ThreatSignal } from "@shared/scan";
-import { invokeLLM } from "../../_core/llm";
-import { providerSkipped, providerUnavailable } from "./common";
+import type { ThreatIntelResult, ThreatSignal } from "../../../shared/scan.js";
+import { invokeLLM } from "../../_core/llm.js";
+import { providerSkipped, providerUnavailable } from "./common.js";
 
 const allowedIndicators = ["urgency", "fear", "authority_impersonation", "credential_request", "payment_request", "procedure_bypass", "reward_manipulation", "emotional_manipulation"] as const;
 type LlmIndicator = (typeof allowedIndicators)[number];

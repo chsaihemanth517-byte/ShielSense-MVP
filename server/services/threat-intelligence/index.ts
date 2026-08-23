@@ -1,7 +1,7 @@
-import type { ScanRequest, ThreatIntelResult } from "@shared/scan";
-import { checkThreatFoxHost } from "./threatfox";
-import { isIpAddress, providerSkipped } from "./common";
-import { checkURLhaus } from "./urlhaus";
+import type { ScanRequest, ThreatIntelResult } from "../../../shared/scan.js";
+import { checkThreatFoxHost } from "./threatfox.js";
+import { isIpAddress, providerSkipped } from "./common.js";
+import { checkURLhaus } from "./urlhaus.js";
 
 function extractUrl(request: ScanRequest) {
   return request.url ?? (request.domain ? `https://${request.domain}` : null);

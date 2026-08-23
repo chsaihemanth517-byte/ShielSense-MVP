@@ -28,7 +28,7 @@ High- and critical-risk reads automatically create an in-session incident report
 
 ## Vercel deployment
 
-Vercel discovers `api/scan.ts`, `api/scan-history.ts`, `api/agent/scan.ts`, and `api/chat.ts` as serverless functions and serves the Vite client from `dist/public`. The `vercel.json` route order is filesystem-first, so these APIs resolve before the SPA fallback handles client pages. Configure `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `URLHAUS_AUTH_KEY`, and `THREATFOX_AUTH_KEY` as server-only Vercel environment variables. Redeploy after adding the variables. The extension’s production API origin must match the deployed Vercel origin in `extension/background.js`.
+Vercel discovers `api/scan.ts`, `api/scan-history.ts`, `api/agent-scan.ts`, `api/agent/scan.ts`, and `api/chat.ts` as serverless functions and serves the Vite client from `dist/public`. The `vercel.json` route order is filesystem-first, so these APIs resolve before the SPA fallback handles client pages. Because this project is an ESM package, the scan and agent function import graph must use explicit `.js` relative specifiers; extensionless TypeScript imports compile but cause Node’s Vercel runtime to raise `ERR_MODULE_NOT_FOUND` before a handler can respond. Configure `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `URLHAUS_AUTH_KEY`, and `THREATFOX_AUTH_KEY` as server-only Vercel environment variables for **Production**, then redeploy after adding the variables. The current Vercel project has no configured environment variables, so this setup is required before provider lookups and optional privacy-safe persistence can operate in production. The extension’s production API origin must match the deployed Vercel origin in `extension/background.js`.
 
 ## Privacy model
 

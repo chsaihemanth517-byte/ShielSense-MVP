@@ -1,4 +1,4 @@
-import { RISK_BANDS, type RiskLevel, type ScanInputType, type ScanResult, type SimulatedResponseAction, type ThreatIntelResult, type ThreatSignal } from "../../../shared/scan";
+import { RISK_BANDS, type RiskLevel, type ScanInputType, type ScanResult, type SimulatedResponseAction, type ThreatIntelResult, type ThreatSignal } from "../../../shared/scan.js";
 
 const PROVIDER_WEIGHTS: Record<NonNullable<ThreatIntelResult["severity"]>, number> = {
   low: 8,

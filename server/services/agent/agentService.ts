@@ -1,8 +1,8 @@
-import type { AgentActivity, IncidentReport, MockInboxEvent } from "../../../shared/agent";
-import type { ScanResult } from "../../../shared/scan";
-import { createIncidentReport, shouldGenerateIncident } from "../../../shared/incident";
-import { runShieldSenseScan } from "../scan/scanService";
-import { mockEventTarget, mockEventToScanRequest } from "./mockInbox";
+import type { AgentActivity, IncidentReport, MockInboxEvent } from "../../../shared/agent.js";
+import type { ScanResult } from "../../../shared/scan.js";
+import { createIncidentReport, shouldGenerateIncident } from "../../../shared/incident.js";
+import { runShieldSenseScan } from "../scan/scanService.js";
+import { mockEventTarget, mockEventToScanRequest } from "./mockInbox.js";
 
 export type AgentScanOutcome = {
   event: MockInboxEvent;

@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { ZodError } from "zod";
-import { runShieldSenseScan } from "../services/scan/scanService";
-import { getScanRepository } from "../services/persistence/scanRepository";
+import { runShieldSenseScan } from "../services/scan/scanService.js";
+import { getScanRepository } from "../services/persistence/scanRepository.js";
 
 type LightweightRequest = { method?: string; body?: unknown; headers?: Record<string, string | string[] | undefined>; query?: unknown };
 type LightweightResponse = { status: (status: number) => LightweightResponse; json: (body: unknown) => unknown; setHeader?: (name: string, value: string) => void; end?: () => void };

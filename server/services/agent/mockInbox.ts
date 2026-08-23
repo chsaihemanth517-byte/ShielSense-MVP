@@ -1,5 +1,5 @@
-import type { MockInboxEvent } from "@shared/agent";
-import type { ScanRequest } from "@shared/scan";
+import type { MockInboxEvent } from "../../../shared/agent.js";
+import type { ScanRequest } from "../../../shared/scan.js";
 
 const simulatedFileHash = (character: string) => character.repeat(64);
 

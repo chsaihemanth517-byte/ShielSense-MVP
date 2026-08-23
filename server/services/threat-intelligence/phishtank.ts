@@ -1,5 +1,5 @@
-import type { ThreatIntelResult } from "@shared/scan";
-import { fetchJson, normaliseScanUrl, providerNotFound, providerSkipped, providerUnavailable } from "./common";
+import type { ThreatIntelResult } from "../../../shared/scan.js";
+import { fetchJson, normaliseScanUrl, providerNotFound, providerSkipped, providerUnavailable } from "./common.js";
 
 type PhishTankRecord = {
   in_database?: boolean | string;

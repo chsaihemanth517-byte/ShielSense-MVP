@@ -1,4 +1,4 @@
-import { handleScanRequest } from "../server/routes/scan";
+import { handleScanRequest } from "../server/routes/scan.js";
 
 type VercelRequest = { method?: string; body?: unknown; headers?: Record<string, string | string[] | undefined> };
 type VercelResponse = { status: (status: number) => VercelResponse; json: (body: unknown) => unknown; setHeader: (name: string, value: string) => void; end: () => void };

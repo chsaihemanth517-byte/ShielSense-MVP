@@ -1,4 +1,4 @@
-import type { SecurityChatRequest, SecurityChatResponse } from "@shared/agent";
+import type { SecurityChatRequest, SecurityChatResponse } from "../../../shared/agent.js";
 
 function providerSummary(request: SecurityChatRequest) {
   return request.scan?.providers.map(provider => `${provider.source}: ${provider.found ? "match found" : provider.status.replaceAll("_", " ")}`).join("; ") ?? "No provider lookup has run.";

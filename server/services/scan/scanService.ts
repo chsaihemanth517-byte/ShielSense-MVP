@@ -1,10 +1,10 @@
 import { createHash, randomUUID } from "node:crypto";
-import { scanRequestSchema, type ScanInputType, type ScanRequest, type ScanResult } from "../../../shared/scan";
-import { getScanRepository } from "../persistence/scanRepository";
-import { correlateRisk } from "../risk/riskEngine";
-import { runLocalHeuristics } from "../threat-intelligence/heuristics";
-import { analyzeHumanManipulation } from "../threat-intelligence/llm";
-import { checkThreatIntelligence } from "../threat-intelligence";
+import { scanRequestSchema, type ScanInputType, type ScanRequest, type ScanResult } from "../../../shared/scan.js";
+import { getScanRepository } from "../persistence/scanRepository.js";
+import { correlateRisk } from "../risk/riskEngine.js";
+import { runLocalHeuristics } from "../threat-intelligence/heuristics.js";
+import { analyzeHumanManipulation } from "../threat-intelligence/llm.js";
+import { checkThreatIntelligence } from "../threat-intelligence/index.js";
 
 function domainFromRequest(request: ScanRequest): string | null {
   if (request.url) {
