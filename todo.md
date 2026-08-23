@@ -118,6 +118,6 @@
 - [x] Save a new project checkpoint for the verified `/demo` response-handling and judge-guidance repair without pushing code.
 - [x] Diagnose the common Vercel runtime invocation failure across `/api/scan`, `/api/agent/scan`, and `/api/chat` using actionable function output or deployment configuration evidence.
 - [x] Repair the common Vercel ESM module-resolution failure by using explicit `.js` runtime imports and add regression coverage for the full scan and agent dependency graph.
-- [ ] Save a checkpoint for the verified local Vercel ESM repair without pushing code.
+- [x] Save a checkpoint for the verified local Vercel ESM repair without pushing code.
 - [ ] With explicit user approval, configure the four required Vercel production environment variables and push the verified repair to trigger a production redeploy.
 - [ ] Verify the post-redeploy production `/api/scan`, `/api/agent/scan`, and `/api/chat` endpoints and close the production deployment investigation.
