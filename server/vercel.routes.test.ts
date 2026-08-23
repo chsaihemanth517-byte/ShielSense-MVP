@@ -24,6 +24,7 @@ const runtimeModulePaths = [
   "../server/services/threat-intelligence/threatfox.ts",
   "../server/services/threat-intelligence/urlhaus.ts",
   "../server/_core/llm.ts",
+  "../shared/agent.ts",
 ];
 
 describe("Vercel API routing", () => {

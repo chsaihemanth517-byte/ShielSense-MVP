@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { fileMetadataSchema, scanResultSchema, scanSourceContextSchema } from "./scan";
+import { fileMetadataSchema, scanResultSchema, scanSourceContextSchema } from "./scan.js";
 
 export const mockInboxEventSchema = z.object({
   id: z.string().min(1).max(64),
