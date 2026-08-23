@@ -110,4 +110,5 @@
 - [x] Verify the remote branch contains the pushed commit and report the result.
 - [x] Inspect the deployed `/api/agent/scan` response, Vercel function routing, and production configuration behind the Agent Console JSON parsing error.
 - [x] Make Agent Console API failures parse safely and present an actionable status without disrupting controlled mock scans.
+- [ ] Add a Vercel file-based `/api/agent/scan` entrypoint matching the Agent Console request path and re-verify the redeployed function.
 - [ ] Validate the repaired API locally and against the deployed route shape, checkpoint the fix, and document any required Vercel environment variables.

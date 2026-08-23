@@ -9,4 +9,9 @@ describe("Vercel API routing", () => {
     expect(config.routes).toEqual(expect.arrayContaining([expect.objectContaining({ handle: "filesystem" })]));
     expect((config.routes as Array<Record<string, string>>).at(-1)).toEqual({ src: "/(.*)", dest: "/index.html" });
   });
+
+  it("configures the nested Agent Console function that matches the browser request path", () => {
+    const functions = config.functions as Record<string, { maxDuration?: number }>;
+    expect(functions["api/agent/scan.ts"]?.maxDuration).toBe(15);
+  });
 });

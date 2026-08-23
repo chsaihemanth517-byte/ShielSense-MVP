@@ -7,7 +7,7 @@
     "api/scan.ts": {
       "maxDuration": 15
     },
-    "api/agent-scan.ts": {
+    "api/agent/scan.ts": {
       "maxDuration": 15
     },
     "api/chat.ts": {
