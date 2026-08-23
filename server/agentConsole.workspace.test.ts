@@ -24,4 +24,11 @@ describe("Agent Console demo integration", () => {
     expect(routeSource).toContain('app.all("/api/agent/scan"');
     expect(routeSource).toContain('app.all("/api/chat"');
   });
+
+  it("reads deployed API failures safely instead of assuming every response contains JSON", () => {
+    expect(consoleSource).toContain("async function readApiPayload");
+    expect(consoleSource).toContain("await response.text()");
+    expect(consoleSource).toContain("instead of JSON");
+    expect(consoleSource).not.toContain("await response.json()");
+  });
 });

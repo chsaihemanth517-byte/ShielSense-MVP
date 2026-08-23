@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { scanRequestSchema, type ScanInputType, type ScanRequest, type ScanResult } from "@shared/scan";
+import { scanRequestSchema, type ScanInputType, type ScanRequest, type ScanResult } from "../../../shared/scan";
 import { getScanRepository } from "../persistence/scanRepository";
 import { correlateRisk } from "../risk/riskEngine";
 import { runLocalHeuristics } from "../threat-intelligence/heuristics";

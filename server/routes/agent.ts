@@ -3,7 +3,7 @@ import { ZodError } from "zod";
 import { getMockInboxEvent } from "../services/agent/mockInbox";
 import { processSimulatedAgentEvent } from "../services/agent/agentService";
 import { answerGroundedSecurityQuestion } from "../services/chat/securityChat";
-import { securityChatRequestSchema } from "@shared/agent";
+import { securityChatRequestSchema } from "../../shared/agent";
 
 type LightweightRequest = { method?: string; body?: unknown; headers?: Record<string, string | string[] | undefined> };
 type LightweightResponse = { status: (status: number) => LightweightResponse; json: (body: unknown) => unknown; setHeader?: (name: string, value: string) => void; end?: () => void };

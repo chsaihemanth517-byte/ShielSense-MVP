@@ -44,6 +44,24 @@ function reportText(report: IncidentReport) {
   ].join("\n");
 }
 
+async function readApiPayload<T extends Record<string, unknown>>(response: Response): Promise<T> {
+  const raw = await response.text();
+  if (!raw.trim()) {
+    throw new Error(`The ShieldSense API returned HTTP ${response.status} with no JSON response. Verify the deployed serverless API route and its environment variables.`);
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new Error(`The ShieldSense API returned HTTP ${response.status} instead of JSON. Check the deployed serverless function logs.`);
+  }
+  const payload = parsed as T & { message?: unknown };
+  if (!response.ok) {
+    throw new Error(typeof payload.message === "string" ? payload.message : `The ShieldSense API returned HTTP ${response.status}.`);
+  }
+  return payload;
+}
+
 export default function AgentConsole() {
   const [agentState, setAgentState] = useState<AgentState>("stopped");
   const [outcomes, setOutcomes] = useState<AgentOutcome[]>([]);
@@ -76,9 +94,9 @@ export default function AgentConsole() {
     setActivity(current => [{ id: `local-${Date.now()}`, timestamp: new Date().toISOString(), level: "info" as const, message: `Queueing simulated event: ${event.subject}` }, ...current].slice(0, 24));
     try {
       const response = await fetch("/api/agent/scan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ eventId: event.id }) });
-      const payload = await response.json() as Omit<AgentOutcome, "event"> | { message?: string };
-      if (!response.ok || !("result" in payload)) throw new Error("message" in payload ? payload.message : "The simulated event did not return a scan result.");
-      const outcome: AgentOutcome = { ...payload, event };
+      const payload = await readApiPayload<Partial<Omit<AgentOutcome, "event">> & { message?: string }>(response);
+      if (!payload.result || !payload.activity) throw new Error(typeof payload.message === "string" ? payload.message : "The simulated event did not return a scan result.");
+      const outcome: AgentOutcome = { event, result: payload.result, incident: payload.incident, activity: payload.activity };
       setOutcomes(current => [outcome, ...current.filter(item => item.result.scanId !== outcome.result.scanId)].slice(0, 12));
       setActivity(current => [...outcome.activity, ...current].slice(0, 24));
       setSelected(outcome);
@@ -116,10 +134,10 @@ export default function AgentConsole() {
     setChatLoading(true);
     try {
       const response = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question, scan: currentScan, target: selected?.incident?.target }) });
-      const payload = await response.json() as { answer?: string; message?: string };
-      setChatMessages(current => [...current, { role: "assistant", content: response.ok && payload.answer ? payload.answer : payload.message ?? "ShieldSense could not prepare a grounded answer." }]);
-    } catch {
-      setChatMessages(current => [...current, { role: "assistant", content: "ShieldSense could not prepare a grounded answer. Select a completed simulated event and try again." }]);
+      const payload = await readApiPayload<{ answer?: string; message?: string }>(response);
+      setChatMessages(current => [...current, { role: "assistant", content: payload.answer ?? payload.message ?? "ShieldSense could not prepare a grounded answer." }]);
+    } catch (error) {
+      setChatMessages(current => [...current, { role: "assistant", content: error instanceof Error ? error.message : "ShieldSense could not prepare a grounded answer. Select a completed simulated event and try again." }]);
     } finally {
       setChatLoading(false);
     }

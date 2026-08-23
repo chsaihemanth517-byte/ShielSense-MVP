@@ -1,6 +1,6 @@
-import type { AgentActivity, IncidentReport, MockInboxEvent } from "@shared/agent";
-import type { ScanResult } from "@shared/scan";
-import { createIncidentReport, shouldGenerateIncident } from "@shared/incident";
+import type { AgentActivity, IncidentReport, MockInboxEvent } from "../../../shared/agent";
+import type { ScanResult } from "../../../shared/scan";
+import { createIncidentReport, shouldGenerateIncident } from "../../../shared/incident";
 import { runShieldSenseScan } from "../scan/scanService";
 import { mockEventTarget, mockEventToScanRequest } from "./mockInbox";
 
