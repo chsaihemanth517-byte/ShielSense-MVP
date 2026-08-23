@@ -112,3 +112,7 @@
 - [x] Make Agent Console API failures parse safely and present an actionable status without disrupting controlled mock scans.
 - [ ] Add a Vercel file-based `/api/agent/scan` entrypoint matching the Agent Console request path and re-verify the redeployed function.
 - [ ] Validate the repaired API locally and against the deployed route shape, checkpoint the fix, and document any required Vercel environment variables.
+- [x] Inspect the `/demo` analysis request, scan-result rendering logic, and current runtime logs to identify why selected cases do not resolve evidence.
+- [x] Repair demo scan submission or response parsing and render an actionable failure state without changing the judge-facing visual hierarchy.
+- [x] Validate all fictional demo cases locally and preserve the original landing, Live Reading, and Agent Console flows.
+- [ ] Save a new project checkpoint for the verified `/demo` response-handling and judge-guidance repair without pushing code.

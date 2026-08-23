@@ -53,6 +53,24 @@ function modeFor(stage: "ready" | "scanning" | "complete" | "error", result: Sca
   return "coherent";
 }
 
+async function readDemoScanResponse(response: Response): Promise<ScanResult> {
+  const raw = await response.text();
+  if (!raw.trim()) {
+    throw new Error(`The ShieldSense scan API returned HTTP ${response.status} with no JSON response. Check the deployed API route and try again.`);
+  }
+  let payload: unknown;
+  try {
+    payload = JSON.parse(raw);
+  } catch {
+    throw new Error(`The ShieldSense scan API returned HTTP ${response.status} instead of JSON. Check the deployed API function.`);
+  }
+  const result = payload as ScanResult & { message?: unknown };
+  if (!response.ok || typeof result.riskScore !== "number") {
+    throw new Error(typeof result.message === "string" ? result.message : "The analysis service did not return a valid result.");
+  }
+  return result;
+}
+
 export default function HackathonDemo() {
   const [selectedId, setSelectedId] = useState("urgency");
   const [stage, setStage] = useState<"ready" | "scanning" | "complete" | "error">("ready");
@@ -85,9 +103,7 @@ export default function HackathonDemo() {
           persistMetadata: false,
         }),
       });
-      const payload = await response.json() as ScanResult | { message?: string };
-      if (!response.ok || !("riskScore" in payload)) throw new Error("message" in payload ? payload.message : "The analysis service did not return a valid result.");
-      setResult(payload);
+      setResult(await readDemoScanResponse(response));
       setStage("complete");
     } catch (error) {
       setScanError(error instanceof Error ? error.message : "The analysis service could not be reached.");
@@ -140,7 +156,7 @@ export default function HackathonDemo() {
         <article className={`demo-read demo-read--${stage} demo-read--${result?.riskLevel ?? "ready"}`} aria-live="polite">
           <div className="demo-read__visual" aria-hidden="true"><CinematicSignalField mode={modeFor(stage, result)} /></div>
           <div className="demo-read__head"><p className="demo-panel-label">03 / TWO-CHANNEL READ</p><span className="demo-read__state">{stage === "complete" ? result?.riskLevel.toUpperCase() : stage === "scanning" ? "READING" : stage === "error" ? "UNAVAILABLE" : "READY"}</span></div>
-          {stage === "ready" && <div className="demo-read__empty"><Sparkles size={20} /><p>Select a case and start the read. The evidence channels will resolve here.</p></div>}
+          {stage === "ready" && <div className="demo-read__empty"><Sparkles size={20} /><p>Choose a fictional case, then click <b>Analyze this message</b>. The evidence channels will resolve here.</p></div>}
           {stage === "scanning" && <div className="demo-read__empty"><LoaderCircle className="demo-spin" size={21} /><p>Tracing sender identity, route behavior, and manipulation cues.</p></div>}
           {stage === "error" && <div className="demo-read__empty"><CircleAlert size={21} /><p>{scanError} Local fixtures remain available; retry once the scan API is running.</p></div>}
           {stage === "complete" && <div className="demo-evidence">
